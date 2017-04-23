@@ -8,29 +8,95 @@
       h2 {
         text-align: center;
       }
+      paper-card {
+        vertical-align: top;
+        width:30%;
+      }
     </style>
 
     <iron-ajax auto url="/lookup/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+    <iron-ajax auto url="/lookup/table/[[table]]/fields" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
+    <iron-ajax id="value" method="POST" url="/[[table]]" handle-as="json" content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
-    <h2>Screen one</h2>
-    <ul>
-      <template is="dom-repeat" items="[[tableList]]" as="tableName">
-        <li>[[tableName]]</li>
-      </template>
-    </li>
+    <paper-material elevation="1">
+      <h2>Screen one</h2>
+      <paper-card>
+        <div class="card-content">
+          <paper-dropdown-menu label="Tables">
+            <paper-listbox class="dropdown-content" selected="{{selectedTable}}">
+              <template is="dom-repeat" items="[[tableList]]" as="tableName">
+                <paper-item>[[tableName]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </paper-card>
+      <paper-card>
+        <div class="card-content">
+          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
+            <paper-input label="[[field.name]]" value="{{field.value}}"></paper-input>
+          </template>
+        </div>
+      </paper-card>
+      <paper-card>
+        <div class="card-content">
+          <span>[[value]]</span>
+        </div>
+        <div class="card-actions">
+          <paper-button raised on-tap="_getValue">Get Value</paper-button>
+        </div>
+      </paper-card>
+    </paper-material>
   </template>
   <script>
     (function(Polymer) {
       Polymer({
         is: 'tm-screen-one',
         properties: {
-          tableList: { type:Array, notify:true }
+          tableList: { type:Array, notify:true },
+          fieldList: { type:Array, notify:true },
+          fieldObjects: { type:Array, notify:true, computed: '_computeFieldObjects(fieldList)' },
+          selectedTable: { type:Number, notify:true },
+          table: { type:String, notify:true, computed: '_computeTable(selectedTable)'},
+          queryParameters: { type:String, notify:true, computed: '_computeQueryParameters(fieldObjects)'},
+          value: { type:String, notify:true, value: '' }
         },
         observers: [
-          'debug(tableList)'
+          'debug(queryParameters)',
+          '_tableListChanged(tableList)'
         ],
+        _createQuery: function(fieldObjects) {
+          const map = {};
+
+          fieldObjects.forEach(function(field) {
+            map[field.name] = field.value;
+          });
+
+          return JSON.stringify(map);
+        },
+        _getValue: function() {
+          const params = this.fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
+          //const url = '/' + this.table + '?' + params;
+          // const url = '/' + this.table;
+          // this.$.value.url = url;
+          const body = this._createQuery(this.fieldObjects);
+          this.$.value.body = body;
+          this.$.value.generateRequest();
+        },
+        _computeQueryParameters: function(fieldObjects) {
+          return fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
+        },
+        _computeFieldObjects: function(fieldList) {
+          return fieldList.map(field => ({name:field,value:''}));
+        },
+        _tableListChanged: function(tableList) {
+          this.selectedTable = 0;
+        },
+        _computeTable: function(tableList, selectedTable) {
+          return this.tableList[this.selectedTable];
+        },
         debug: function(object) {
-          console.log(object);
+          console.log('-->> DEBUG: ', object);
         },
         ready: function() {
           console.log('Element tm-screen-one has been created.');

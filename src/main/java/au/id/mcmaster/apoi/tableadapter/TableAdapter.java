@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -123,6 +124,22 @@ public class TableAdapter {
 		return columnDataRows;
 	}
 
+	public List<String> getColumnDataTitles() {
+		List<String> columnDataTitles = new ArrayList<String>();
+		columnDataTitles.add("ANB");
+		Rectangle table = tableDefinition.getColumnDataRectangle();
+		Sheet worksheet = workbook.getSheet(tableDefinition.getWorksheetName());
+		for (int r=table.getStartY(); r<=table.getEndY(); r++) {
+			Row row = worksheet.getRow(r);
+			for (int c=table.getStartX()-1; c<table.getStartX(); c++) {
+				Cell cell = row.getCell(c);
+				String value = getCellStringValue(cell);
+				columnDataTitles.add(value);
+			}
+		}
+		return columnDataTitles;
+	}
+	
 	private String[][] getData(Sheet worksheet, Rectangle table) {
 		String[][] columnDataRows = new String[table.getHeight()][table.getWidth()];
 		for (int r=table.getStartY(), y=0; r<=table.getEndY(); r++,y++) {

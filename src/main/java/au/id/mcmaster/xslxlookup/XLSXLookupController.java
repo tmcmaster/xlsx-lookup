@@ -1,9 +1,12 @@
 package au.id.mcmaster.xslxlookup;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,11 +23,25 @@ public class XLSXLookupController {
     }
 	
 	@RequestMapping(value = "/lookup/table", method = RequestMethod.GET)
-	public List<String> table() {
-		List<String> list = new ArrayList<String>();
-		Collections.addAll(list, new String[] { "Test1", "Test2" });
-		return list;
+	public Collection<String> table() {
+		return lookupService.getTableNames();
 	}
+	
+	@RequestMapping(value = "/lookup/table/{table}/fields", method = RequestMethod.GET)
+	public Collection<String> fields(@PathVariable String table) {
+		return lookupService.getFieldNames(table);
+	}
+	
+	@RequestMapping(value="/Test3", method=RequestMethod.POST)
+	public String lookup(@RequestBody Map<String,String> query) {
+		
+		Collection<String> fields = lookupService.getFieldNames("Test3");
+		String[] args = new String[fields.size()];
+		List<String> values = fields.stream().map(field -> query.get(field)).collect(Collectors.toList());
+		values.toArray(args);
+		return lookupService.getValue("Test3", args);
+	}
+	
 	
 	@RequestMapping("/Test1")
 	public String lookup(@RequestParam String policyNumber, 
