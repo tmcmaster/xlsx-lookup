@@ -1,0 +1,41 @@
+
+<dom-module id="tm-screen-one">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      h2 {
+        text-align: center;
+      }
+    </style>
+
+    <iron-ajax auto url="/lookup/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+
+    <h2>Screen one</h2>
+    <ul>
+      <template is="dom-repeat" items="[[tableList]]" as="tableName">
+        <li>[[tableName]]</li>
+      </template>
+    </li>
+  </template>
+  <script>
+    (function(Polymer) {
+      Polymer({
+        is: 'tm-screen-one',
+        properties: {
+          tableList: { type:Array, notify:true }
+        },
+        observers: [
+          'debug(tableList)'
+        ],
+        debug: function(object) {
+          console.log(object);
+        },
+        ready: function() {
+          console.log('Element tm-screen-one has been created.');
+        }
+      });
+    })(window.Polymer);
+  </script>
+</dom-module>

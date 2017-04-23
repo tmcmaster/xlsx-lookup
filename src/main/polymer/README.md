@@ -1,38 +1,19 @@
-# \<static-element\>
+# tm-xlsx-lookup
 
+This is a polymer component for interacting with the XLSX Lookup micro-service.
 
+## Initialise
 
-## Install the Polymer-CLI
+From the the polymer app source directory install bower dependencies.
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
-
-## Viewing Your Application
-
-```
-$ polymer serve
+```code
+bower install
 ```
 
-## Building Your Application
+## Deploy
 
+From the the polymer app source directory, install the polymer UI into the web app's resources/static directory:
+
+```code
+./vulcanize.sh
 ```
-$ polymer build
-```
-
-This will create a `build/` folder with `bundled/` and `unbundled/` sub-folders
-containing a bundled (Vulcanized) and unbundled builds, both run through HTML,
-CSS, and JS optimizers.
-
-You can serve the built versions by giving `polymer serve` a folder to serve
-from:
-
-```
-$ polymer serve build/bundled
-```
-
-## Running Tests
-
-```
-$ polymer test
-```
-
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.

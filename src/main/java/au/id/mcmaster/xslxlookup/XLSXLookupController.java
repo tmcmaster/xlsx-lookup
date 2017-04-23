@@ -1,6 +1,11 @@
 package au.id.mcmaster.xslxlookup;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +18,13 @@ public class XLSXLookupController {
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name) {
         return "greeting " + name;
     }
+	
+	@RequestMapping(value = "/lookup/table", method = RequestMethod.GET)
+	public List<String> table() {
+		List<String> list = new ArrayList<String>();
+		Collections.addAll(list, new String[] { "Test1", "Test2" });
+		return list;
+	}
 	
 	@RequestMapping("/Test1")
 	public String lookup(@RequestParam String policyNumber, 
