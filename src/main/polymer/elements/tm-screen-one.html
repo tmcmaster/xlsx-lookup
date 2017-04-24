@@ -10,7 +10,14 @@
       }
       paper-card {
         vertical-align: top;
-        width:30%;
+        width:50%;
+      }
+      paper-card.left {
+        clear:both;
+        float:left;
+      }
+      paper-dropdown-menu {
+        width:100%;
       }
     </style>
 
@@ -20,7 +27,7 @@
 
     <paper-material elevation="1">
       <h2>Screen one</h2>
-      <paper-card>
+      <paper-card class="left">
         <div class="card-content">
           <paper-dropdown-menu label="Tables">
             <paper-listbox class="dropdown-content" selected="{{selectedTable}}">
@@ -31,14 +38,7 @@
           </paper-dropdown-menu>
         </div>
       </paper-card>
-      <paper-card>
-        <div class="card-content">
-          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
-            <paper-input label="[[field.name]]" value="{{field.value}}"></paper-input>
-          </template>
-        </div>
-      </paper-card>
-      <paper-card>
+      <paper-card class="left">
         <div class="card-content">
           <span>[[value]]</span>
         </div>
@@ -46,6 +46,14 @@
           <paper-button raised on-tap="_getValue">Get Value</paper-button>
         </div>
       </paper-card>
+      <paper-card>
+        <div class="card-content">
+          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
+            <paper-input label="[[field.name]]" value="{{field.value}}"></paper-input>
+          </template>
+        </div>
+      </paper-card>
+
     </paper-material>
   </template>
   <script>
@@ -77,8 +85,8 @@
         _getValue: function() {
           const params = this.fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
           //const url = '/' + this.table + '?' + params;
-          // const url = '/' + this.table;
-          // this.$.value.url = url;
+          const url = '/table/' + this.table;
+          this.$.value.url = url;
           const body = this._createQuery(this.fieldObjects);
           this.$.value.body = body;
           this.$.value.generateRequest();

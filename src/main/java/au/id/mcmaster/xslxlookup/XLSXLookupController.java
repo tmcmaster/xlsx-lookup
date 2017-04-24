@@ -42,6 +42,15 @@ public class XLSXLookupController {
 		return lookupService.getValue("Test3", args);
 	}
 	
+	@RequestMapping(value="/table/{table}", method=RequestMethod.POST)
+	public String lookupTableData(@PathVariable String table, @RequestBody Map<String,String> query) {
+		
+		Collection<String> fields = lookupService.getFieldNames(table);
+		String[] args = new String[fields.size()];
+		List<String> values = fields.stream().map(field -> query.get(field)).collect(Collectors.toList());
+		values.toArray(args);
+		return lookupService.getValue(table, args);
+	}
 	
 	@RequestMapping("/Test1")
 	public String lookup(@RequestParam String policyNumber, 

@@ -23,8 +23,8 @@ public class XLSXLookupService
 	{
 		tableDefinitions.put("Test1", new TableDefinition("workbooks/Testing.xlsx","Test1",1,2,36,8,1,5));
 		tableDefinitions.put("Test2", new TableDefinition("workbooks/Testing.xlsx","Test2",1,1,5,4,1,4));
-		tableDefinitions.put("Test3", new TableDefinition("workbooks/Testing.xlsx","Test2",1,1,5,4,1,4));
-
+		tableDefinitions.put("Test3 - DEATH AND TPD", new TableDefinition("workbooks/Testing.xlsx","Test3",3,7,6,3,1,50));
+		tableDefinitions.put("Test3 - INCOME PROTECTION", new TableDefinition("workbooks/Testing.xlsx","Test3",12,7,4,2,1,50));
 	}
 	
 	public Collection<String> getTableNames() {
