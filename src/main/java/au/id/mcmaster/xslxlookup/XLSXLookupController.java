@@ -27,6 +27,11 @@ public class XLSXLookupController {
 		return lookupService.getTableNames();
 	}
 	
+	@RequestMapping(value = "/lookup/table/{table}/options", method = RequestMethod.GET)
+	public Map<String,Collection<String>> optionsMap(@PathVariable String table) {
+		return lookupService.getValueOptionsMap(table);
+	}
+	
 	@RequestMapping(value = "/lookup/table/{table}/fields", method = RequestMethod.GET)
 	public Collection<String> fields(@PathVariable String table) {
 		return lookupService.getFieldNames(table);
@@ -51,6 +56,8 @@ public class XLSXLookupController {
 		values.toArray(args);
 		return lookupService.getValue(table, args);
 	}
+	
+	
 	
 	@RequestMapping("/Test1")
 	public String lookup(@RequestParam String policyNumber, 

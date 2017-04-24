@@ -3,9 +3,12 @@ package au.id.mcmaster.apoi.tableadapter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -39,6 +42,53 @@ public class TableAdapter {
 		Cell cell = row.getCell(3);
 		//System.out.println(cell.getNumericCellValue());
 		System.out.println(cell.getStringCellValue());
+	}
+	
+	/**
+	 * Get a list of unique options for the row value, and options for each of the column header lines.
+	 * 
+	 * @return
+	 */
+	public Map<String,Collection<String>> getValueOptionsMap() {
+		
+		Map<String,Collection<String>> valueOptionsMap = new HashMap<String,Collection<String>>();
+		
+		// get the labels for all of the input data
+		List<String> valueTitles = getColumnDataTitles();
+
+		// row data unique value options
+		String rowDataLabel = valueTitles.get(0);
+		String[][] rowData = getRowData();
+		String[] rowDataValues = getColumnOfData(rowData,0);
+		Collection<String> uniqueRowData = uniqueList(rowDataValues);
+		valueOptionsMap.put(rowDataLabel, uniqueRowData);
+		
+		// column data unique value options
+		String[][] columnData = getColumnData();
+		for (int i=0; i<columnData.length; i++) {
+			String columnDataLabel = valueTitles.get(i+1);
+			Collection<String> uniqueColumnValues = uniqueList(columnData[i]);
+			valueOptionsMap.put(columnDataLabel, uniqueColumnValues);
+		}
+		
+		return valueOptionsMap;
+	}
+	
+	public String[] getColumnOfData(String[][] data, int column) {
+		String[] columnData = new String[data.length];
+		for (int i=0; i<data.length; i++) {
+			columnData[i] = data[i][column];
+		}
+		return columnData;
+	}
+	
+	public Collection<String> uniqueList(String[] data) {
+		Set<String> set = new HashSet<String>();
+		set.add("Undefined");
+		for (String item : data) {
+			set.add(item);
+		}
+		return set;
 	}
 	
 	public Map<String,String> getValueMap() {

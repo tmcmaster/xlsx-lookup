@@ -25,6 +25,8 @@ public class XLSXLookupService
 		tableDefinitions.put("Test2", new TableDefinition("workbooks/Testing.xlsx","Test2",1,1,5,4,1,4));
 		tableDefinitions.put("Test3 - DEATH AND TPD", new TableDefinition("workbooks/Testing.xlsx","Test3",3,7,6,3,1,50));
 		tableDefinitions.put("Test3 - INCOME PROTECTION", new TableDefinition("workbooks/Testing.xlsx","Test3",12,7,4,2,1,50));
+		tableDefinitions.put("Energy Super GSC - DS", new TableDefinition("workbooks/private/Testing-Private.xlsx","Energy Super GSC - DS",1,3,37,8,1,50));
+		tableDefinitions.put("Energy Super GSC - PR", new TableDefinition("workbooks/private/Testing-Private.xlsx","Energy Super GSC - PR",1,3,83,8,1,50));
 	}
 	
 	public Collection<String> getTableNames() {
@@ -83,5 +85,10 @@ public class XLSXLookupService
 	public Collection<String> getFieldNames(String table) {
 		TableAdapter tableAdapter = getTableAdapter(table);
 		return tableAdapter.getColumnDataTitles();
+	}
+	
+	public Map<String,Collection<String>> getValueOptionsMap(String table) {
+		TableAdapter tableAdapter = getTableAdapter(table);
+		return tableAdapter.getValueOptionsMap();
 	}
 }

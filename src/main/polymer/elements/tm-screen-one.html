@@ -23,6 +23,7 @@
 
     <iron-ajax auto url="/lookup/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
     <iron-ajax auto url="/lookup/table/[[table]]/fields" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
+    <iron-ajax auto url="/lookup/table/[[table]]/options" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
     <iron-ajax id="value" method="POST" url="/[[table]]" handle-as="json" content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
     <paper-material elevation="1">
@@ -46,14 +47,26 @@
           <paper-button raised on-tap="_getValue">Get Value</paper-button>
         </div>
       </paper-card>
-      <paper-card>
+      <!-- <paper-card>
         <div class="card-content">
           <template is="dom-repeat" items="[[fieldObjects]]" as="field">
             <paper-input label="[[field.name]]" value="{{field.value}}"></paper-input>
           </template>
         </div>
+      </paper-card> -->
+      <paper-card>
+        <div class="card-content">
+          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
+            <paper-dropdown-menu label="{{field.name}}">
+              <paper-listbox class="dropdown-content" selected="{{field.value}}">
+                <template is="dom-repeat" items="[[_getFieldOptions(table,field.name,fieldOptionMap)]]" as="option">
+                  <paper-item>[[option]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </template>
+        </div>
       </paper-card>
-
     </paper-material>
   </template>
   <script>
@@ -63,6 +76,7 @@
         properties: {
           tableList: { type:Array, notify:true },
           fieldList: { type:Array, notify:true },
+          fieldOptionMap: { type:Object, notify:true },
           fieldObjects: { type:Array, notify:true, computed: '_computeFieldObjects(fieldList)' },
           selectedTable: { type:Number, notify:true },
           table: { type:String, notify:true, computed: '_computeTable(selectedTable)'},
@@ -70,14 +84,19 @@
           value: { type:String, notify:true, value: '' }
         },
         observers: [
-          'debug(queryParameters)',
+          'debug(fieldOptionMap)',
           '_tableListChanged(tableList)'
         ],
+        _getFieldOptions: function(table,fieldName,fieldOptionMap) {
+          if (fieldOptionMap !== undefined) {
+            return fieldOptionMap[fieldName];
+          }
+        },
         _createQuery: function(fieldObjects) {
           const map = {};
-
+          const self = this;
           fieldObjects.forEach(function(field) {
-            map[field.name] = field.value;
+            map[field.name] = self.fieldOptionMap[field.name][field.value];
           });
 
           return JSON.stringify(map);
