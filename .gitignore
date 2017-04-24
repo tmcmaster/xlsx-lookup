@@ -31,3 +31,8 @@ nbdist/
 ### Polymer ###
 
 src/main/polymer/bower_components
+
+### Local ###
+
+~*
+src/main/resources/workbooks/private
