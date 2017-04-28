@@ -1,16 +1,22 @@
 package au.id.mcmaster.apoi.tableadapter;
 
-public class TableDefinition
+public class XLTableDefinition
 {
 	private String workbookName;
 	private String worksheetName;
-	private Rectangle columnData = new Rectangle();
-	private Rectangle rowData = new Rectangle();
-	private Rectangle valueData = new Rectangle();
+	private XLRectangle columnData = new XLRectangle();
+	private XLRectangle rowData = new XLRectangle();
+	private XLRectangle valueData = new XLRectangle();
+	private XLRectangle titleData = new XLRectangle();
 	
-	public TableDefinition(String workbookName, String worksheetName, int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight) {
+	public XLTableDefinition(String workbookName, String worksheetName, int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight) {
 		this.workbookName = workbookName;
 		this.worksheetName = worksheetName;
+		
+		this.titleData.setStartX(tableStartX - 1);
+		this.titleData.setStartY(tableStartY - 1);
+		this.titleData.setEndX(tableStartX - 1 + rowDataWidth - 1);
+		this.titleData.setEndY(tableStartY - 1 + columnDataHeight - 1);
 		
 		// define the column data rectangle
 		this.columnData.setStartX(tableStartX - 1 + rowDataWidth);
@@ -31,6 +37,18 @@ public class TableDefinition
 		this.valueData.setEndY(tableStartY - 1 + columnDataHeight + rowDataHeight - 1);
 		
 	}
+	
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("== " + workbookName + " : " + worksheetName + " ==\n");
+		buffer.append("Title Data: " + titleData + "\n");
+		buffer.append("Column Data: " + columnData + "\n");
+		buffer.append("Row Data: " + rowData + "\n");
+		buffer.append("Value Data: " + valueData + "\n");
+		
+		return buffer.toString();
+	}
 
 	public String getWorkbookName() {
 		return this.workbookName;
@@ -40,15 +58,19 @@ public class TableDefinition
 		return this.worksheetName;
 	}
 	
-	public Rectangle getColumnDataRectangle() {
+	public XLRectangle getColumnDataRectangle() {
 		return columnData;
 	}
 
-	public Rectangle getRowDataRectangle() {
+	public XLRectangle getRowDataRectangle() {
 		return rowData;
 	}
 
-	public Rectangle getValueDataRectangle() {
+	public XLRectangle getValueDataRectangle() {
 		return valueData;
+	}
+	
+	public XLRectangle getTitleDataRectangle() {
+		return titleData;
 	}
 }

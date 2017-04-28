@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.id.mcmaster.apoi.tableadapter.TableAdapter;
-import au.id.mcmaster.apoi.tableadapter.TableDefinition;
+import au.id.mcmaster.apoi.tableadapter.XLTable;
+import au.id.mcmaster.apoi.tableadapter.XLTableDefinition;
 
 @SpringBootApplication
 public class XSLXLookupApplication {

@@ -47,13 +47,6 @@
           <paper-button raised on-tap="_getValue">Get Value</paper-button>
         </div>
       </paper-card>
-      <!-- <paper-card>
-        <div class="card-content">
-          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
-            <paper-input label="[[field.name]]" value="{{field.value}}"></paper-input>
-          </template>
-        </div>
-      </paper-card> -->
       <paper-card>
         <div class="card-content">
           <template is="dom-repeat" items="[[fieldObjects]]" as="field">
@@ -114,7 +107,7 @@
           return fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
         },
         _computeFieldObjects: function(fieldList) {
-          return fieldList.map(field => ({name:field,value:''}));
+          return fieldList.map(field => ({name:field,value:0}));
         },
         _tableListChanged: function(tableList) {
           this.selectedTable = 0;

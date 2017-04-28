@@ -17,7 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import au.id.mcmaster.apoi.tableadapter.TableDefinition;
+import au.id.mcmaster.apoi.tableadapter.XLTableDefinition;
 
 public class ReadFromComplexSpreadsheet {
 	private static final String FILE_NAME = "generated/MyFirstExcel.xlsx";
@@ -27,7 +27,7 @@ public class ReadFromComplexSpreadsheet {
 		
 		try {
 
-			TableDefinition tableDefinition = new TableDefinition(FILE_NAME,"SecondTab",1,1,5,4,1,4);
+			XLTableDefinition tableDefinition = new XLTableDefinition(FILE_NAME,"SecondTab",1,1,5,4,1,4);
 			
 			System.out.println("Column Data: " + tableDefinition.getColumnDataRectangle());
 			System.out.println("   Row Data: " + tableDefinition.getRowDataRectangle());

@@ -1,6 +1,6 @@
 package au.id.mcmaster.apoi.tableadapter;
 
-public class Rectangle {
+public class XLRectangle {
 	private int startX = -1;
 	private int startY = -1;
 	private int endX = -1;
