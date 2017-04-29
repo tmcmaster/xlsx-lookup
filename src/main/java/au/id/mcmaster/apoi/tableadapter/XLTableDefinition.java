@@ -2,14 +2,35 @@ package au.id.mcmaster.apoi.tableadapter;
 
 public class XLTableDefinition
 {
+	public static final XLTableDefinition DEFINITION_TABLE = new XLTableDefinition(null,"Definitions",1,2,8,2,1,25);
+
 	private String workbookName;
 	private String worksheetName;
 	private XLRectangle columnData = new XLRectangle();
 	private XLRectangle rowData = new XLRectangle();
 	private XLRectangle valueData = new XLRectangle();
 	private XLRectangle titleData = new XLRectangle();
-	
+
 	public XLTableDefinition(String workbookName, String worksheetName, int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight) {
+		init(workbookName, worksheetName, tableStartX, tableStartY,
+				columnDataWidth, columnDataHeight, rowDataWidth, rowDataHeight);
+	}
+	
+	public XLTableDefinition(String fileName, String... defintionData) {
+		String workbookName = fileName;
+		String worksheetName = defintionData[1];
+		int tableStartX = Integer.parseInt(defintionData[2]);
+		int tableStartY = Integer.parseInt(defintionData[3]);
+		int columnDataWidth = Integer.parseInt(defintionData[4]);
+		int columnDataHeight = Integer.parseInt(defintionData[5]);
+		int rowDataWidth = Integer.parseInt(defintionData[6]);
+		int rowDataHeight = Integer.parseInt(defintionData[7]);
+		
+		init(workbookName, worksheetName, tableStartX, tableStartY,
+				columnDataWidth, columnDataHeight, rowDataWidth, rowDataHeight);
+	}
+	
+	private void init(String workbookName, String worksheetName, int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight) {
 		this.workbookName = workbookName;
 		this.worksheetName = worksheetName;
 		
