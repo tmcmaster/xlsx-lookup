@@ -1,4 +1,4 @@
-package au.id.mcmaster.xslxlookup;
+package au.id.mcmaster.xlsxlookup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,7 +87,7 @@ public class XLSXLookupService
 		return tableAdapter.getColumnDataTitles();
 	}
 	
-	public Map<String,Collection<String>> getValueOptionsMap(String table) {
+	public Map<String,List<String>> getValueOptionsMap(String table) {
 		XLTable tableAdapter = getTableAdapter(table);
 		return tableAdapter.getValueOptionsMap();
 	}

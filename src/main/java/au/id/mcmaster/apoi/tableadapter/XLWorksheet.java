@@ -1,8 +1,5 @@
 package au.id.mcmaster.apoi.tableadapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -72,43 +69,6 @@ public class XLWorksheet {
 		}
 	}
 
-//	public String[][] getColumnData(Rectangle table) {
-//		//Rectangle table = tableDefinition.getColumnDataRectangle();
-//		//Sheet worksheet = workbook.getSheet(tableDefinition.getWorksheetName());
-//		String[][] columnDataRows = getData(worksheet, table);
-//		return columnDataRows;
-//	}
-//
-//	public String[][] getRowData() {
-//		Rectangle table = tableDefinition.getRowDataRectangle();
-//		Sheet worksheet = workbook.getSheet(tableDefinition.getWorksheetName());
-//		String[][] columnDataRows = getData(worksheet, table);
-//		return columnDataRows;
-//	}
-//
-//	public String[][] getValueData() {
-//		Rectangle table = tableDefinition.getValueDataRectangle();
-//		Sheet worksheet = workbook.getSheet(tableDefinition.getWorksheetName());
-//		String[][] columnDataRows = getData(worksheet, table);
-//		return columnDataRows;
-//	}
-
-//	public List<String> getColumnDataTitles(Rectangle table) {
-//		List<String> columnDataTitles = new ArrayList<String>();
-//		columnDataTitles.add("ANB");
-//		Rectangle table = tableDefinition.getColumnDataRectangle();
-//		Sheet worksheet = workbook.getSheet(tableDefinition.getWorksheetName());
-//		for (int r=table.getStartY(); r<=table.getEndY(); r++) {
-//			Row row = worksheet.getRow(r);
-//			for (int c=table.getStartX()-1; c<table.getStartX(); c++) {
-//				Cell cell = row.getCell(c);
-//				String value = getCellStringValue(cell);
-//				columnDataTitles.add(value);
-//			}
-//		}
-//		return columnDataTitles;
-//	}
-	
 	public XLDataGrid getData(XLRectangle table) {
 		int width = table.getWidth();
 		int height = table.getHeight();

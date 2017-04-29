@@ -1,4 +1,4 @@
-package au.id.mcmaster.xslxlookup;
+package au.id.mcmaster.xlsxlookup;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +28,7 @@ public class XLSXLookupController {
 	}
 	
 	@RequestMapping(value = "/lookup/table/{table}/options", method = RequestMethod.GET)
-	public Map<String,Collection<String>> optionsMap(@PathVariable String table) {
+	public Map<String,List<String>> optionsMap(@PathVariable String table) {
 		return lookupService.getValueOptionsMap(table);
 	}
 	
