@@ -21,10 +21,11 @@
       }
     </style>
 
-    <iron-ajax auto url="/lookup/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
-    <iron-ajax auto url="/lookup/table/[[table]]/fields" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
-    <iron-ajax auto url="/lookup/table/[[table]]/options" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
-    <iron-ajax id="value" method="POST" url="/[[table]]" handle-as="json" content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
+    <iron-ajax auto url="/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
+    <iron-ajax id="value" method="POST" url="[[_computeValueUrl(table)]]" handle-as="json"
+                          content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
     <paper-material elevation="1">
       <h2>Screen one</h2>
@@ -72,39 +73,37 @@
           fieldOptionMap: { type:Object, notify:true },
           fieldObjects: { type:Array, notify:true, computed: '_computeFieldObjects(fieldList)' },
           selectedTable: { type:Number, notify:true },
-          table: { type:String, notify:true, computed: '_computeTable(selectedTable)'},
-          queryParameters: { type:String, notify:true, computed: '_computeQueryParameters(fieldObjects)'},
+          table: { type:String, notify:true, computed: '_computeTable(tableList,selectedTable)'},
           value: { type:String, notify:true, value: '' }
         },
         observers: [
           'debug(fieldOptionMap)',
           '_tableListChanged(tableList)'
         ],
+        _computeFieldsUrl: function(table) {
+          return '/table/' + table + '/fields';
+        },
+        _computeOptionsUrl: function(table) {
+          return '/table/' + table + '/options';
+        },
+        _computeValueUrl: function(table) {
+          return '/table/' + table + '/value';
+        },
         _getFieldOptions: function(table,fieldName,fieldOptionMap) {
           if (fieldOptionMap !== undefined) {
             return fieldOptionMap[fieldName];
           }
         },
-        _createQuery: function(fieldObjects) {
+        _createQuery: function(fieldObjects,fieldOptionMap) {
           const map = {};
-          const self = this;
           fieldObjects.forEach(function(field) {
-            map[field.name] = self.fieldOptionMap[field.name][field.value];
+            map[field.name] = fieldOptionMap[field.name][field.value];
           });
-
           return JSON.stringify(map);
         },
         _getValue: function() {
-          const params = this.fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
-          //const url = '/' + this.table + '?' + params;
-          const url = '/table/' + this.table;
-          this.$.value.url = url;
-          const body = this._createQuery(this.fieldObjects);
-          this.$.value.body = body;
+          this.$.value.body = this._createQuery(this.fieldObjects, this.fieldOptionMap);
           this.$.value.generateRequest();
-        },
-        _computeQueryParameters: function(fieldObjects) {
-          return fieldObjects.map(field => (field.name + '=' + field.value)).join('&');
         },
         _computeFieldObjects: function(fieldList) {
           return fieldList.map(field => ({name:field,value:0}));
@@ -113,7 +112,7 @@
           this.selectedTable = 0;
         },
         _computeTable: function(tableList, selectedTable) {
-          return this.tableList[this.selectedTable];
+          return tableList[selectedTable];
         },
         debug: function(object) {
           console.log('-->> DEBUG: ', object);
