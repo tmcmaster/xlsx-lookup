@@ -15,35 +15,36 @@ import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 
 
 @RestController
+@RequestMapping("/table")
 public class XLSXLookupController {
 	XLSXLookupService lookupService = new XLSXLookupService();
 	
-	@RequestMapping(value = "/table", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public Collection<String> table() {
 		return lookupService.getTableNames();
 	}
 	
-	@RequestMapping(value = "/table/{table}/options", method = RequestMethod.GET)
+	@RequestMapping(value = "/{table}/options", method = RequestMethod.GET)
 	public Map<String,List<String>> optionsMap(@PathVariable String table) {
 		return lookupService.getValueOptionsMap(table);
 	}
 	
-	@RequestMapping(value = "/table/{table}/optionstree", method = RequestMethod.GET)
+	@RequestMapping(value = "/{table}/optionstree", method = RequestMethod.GET)
 	public XLOptionTree optionsTree(@PathVariable String table) {
 		return lookupService.getColumnValuesOptionTree(table);
 	}
 	
-	@RequestMapping(value = "/table/{table}/values", method = RequestMethod.GET)
+	@RequestMapping(value = "/{table}/values", method = RequestMethod.GET)
 	public Map<String,String> valueMap(@PathVariable String table) {
 		return lookupService.getValueMap(table);
 	}
 	
-	@RequestMapping(value = "/table/{table}/fields", method = RequestMethod.GET)
+	@RequestMapping(value = "/{table}/fields", method = RequestMethod.GET)
 	public Collection<String> fields(@PathVariable String table) {
 		return lookupService.getFieldNames(table);
 	}
 	
-	@RequestMapping(value="/table/{table}/value", method=RequestMethod.POST)
+	@RequestMapping(value="/{table}/value", method=RequestMethod.POST)
 	public String lookupTableData(@PathVariable String table, @RequestBody Map<String,String> queryMap) {
 		return lookupService.getValue(table, queryMap);
 	}

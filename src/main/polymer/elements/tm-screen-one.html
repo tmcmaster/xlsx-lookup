@@ -97,7 +97,9 @@
         _getFieldOptions: function(table,fieldPos,fieldName,fieldOptionMap,fieldOptionTree,fieldObjects) {
           if (fieldOptionMap !== undefined) {
             var fieldOptions = fieldOptionMap[fieldName];
-            //fieldOptions = filterFieldOptions(fieldOptions, fieldPos, fieldObjects, fieldOptionTree,fieldOptionMap);
+            // if (fieldName !== 'ANB') {
+            //   fieldOptions = filterFieldOptions(fieldOptions, fieldPos, fieldObjects, fieldOptionTree,fieldOptionMap);
+            // }
             return fieldOptions;
           } else {
             return undefined;

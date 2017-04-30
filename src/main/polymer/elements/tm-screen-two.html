@@ -1,0 +1,126 @@
+
+<dom-module id="tm-screen-two">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      h2 {
+        text-align: center;
+      }
+      paper-card {
+        vertical-align: top;
+        width:50%;
+      }
+      paper-card.left {
+        clear:both;
+        float:left;
+      }
+      paper-dropdown-menu {
+        width:100%;
+      }
+      paper-tabs {
+        width:100%;
+      }
+      iron-pages {
+        width:100%;
+        display: inline-block;
+      }
+      textarea {
+        display: inline-block;
+        width:100%;
+        height:700px;
+      }
+    </style>
+    <iron-ajax auto url="/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeOptionsTreeUrl(table)]]" handle-as="json" last-response="{{fieldOptionTree}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeValuesUrl(table)]]" handle-as="json" last-response="{{valuesMap}}"></iron-ajax>
+
+    <paper-card class="left">
+      <div class="card-content">
+        <paper-dropdown-menu label="Tables">
+          <paper-listbox class="dropdown-content" selected="{{selectedTable}}">
+            <template is="dom-repeat" items="[[tableList]]" as="tableName">
+              <paper-item>[[tableName]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+    </paper-card>
+    <paper-tabs selected="{{selectedTab}}">
+      <paper-tab>Field List</paper-tab>
+      <paper-tab>Option Map</paper-tab>
+      <paper-tab>Option Tree</paper-tab>
+      <paper-tab>Value Map</paper-tab>
+    </paper-tabs>
+    <iron-pages selected="[[selectedTab]]">
+      <textarea id="fieldList"></textarea>
+      <textarea id="optionMap"></textarea>
+      <textarea id="optionTree"></textarea>
+      <textarea id="valuesMap"></textarea>
+    </iron-pages>
+  </template>
+  <script>
+    (function(Polymer) {
+      Polymer({
+        is: 'tm-screen-two',
+        properties: {
+          tableList: { type:Array, notify:true },
+          selectedTable: { type:Number, notify:true },
+          table: { type:String, notify:true, computed: '_computeTable(tableList,selectedTable)'},
+          fieldList: { type:Array, notify:true },
+          fieldOptionMap: { type:Object, notify:true },
+          fieldOptionTree: { type:Object, notify:true },
+          valuesMap: { type:Object, notify:true },
+          selectedTab: { type:Number, notify:true, value:"0" }
+        },
+        observers: [
+          'debug(valuesMap)',
+          '_tableListChanged(tableList)',
+          '_fieldListChanged(fieldList)',
+          '_fieldOptionMapChanged(fieldOptionMap)',
+          '_fieldOptionTreeChanged(fieldOptionTree)',
+          '_valuesMapChanged(valuesMap)'
+        ],
+        _fieldListChanged: function(fieldList) {
+          this.$.fieldList.value = JSON.stringify(fieldList, null, 4);
+        },
+        _fieldOptionMapChanged: function(fieldOptionMap) {
+          this.$.optionMap.value = JSON.stringify(fieldOptionMap, null, 4);
+        },
+        _fieldOptionTreeChanged: function(fieldOptionTree) {
+          this.$.optionTree.value = JSON.stringify(fieldOptionTree, null, 4);
+        },
+        _valuesMapChanged: function(valuesMap) {
+          this.$.valuesMap.value = JSON.stringify(valuesMap, null, 4);
+        },
+        _computeFieldsUrl: function(table) {
+          return '/table/' + table + '/fields';
+        },
+        _computeOptionsUrl: function(table) {
+          return '/table/' + table + '/options';
+        },
+        _computeOptionsTreeUrl: function(table) {
+          return '/table/' + table + '/optionstree';
+        },
+        _computeValuesUrl: function(table) {
+          return '/table/' + table + '/values';
+        },
+        _tableListChanged: function(tableList) {
+          this.selectedTable = 0;
+        },
+        _computeTable: function(tableList, selectedTable) {
+          return tableList[selectedTable];
+        },
+        debug: function(object) {
+          console.log(object);
+        },
+        ready: function() {
+          console.log('Element tm-screen-two has been created.');
+        }
+      });
+    })(window.Polymer);
+  </script>
+</dom-module>
