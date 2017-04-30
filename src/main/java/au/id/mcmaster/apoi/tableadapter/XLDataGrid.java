@@ -16,6 +16,10 @@ public class XLDataGrid {
 		return data.length;
 	}
 	
+	public int getNumberOfColumns() {
+		return data[0].length;
+	}
+	
 	public String getValue(int row, int column) {
 		return data[row][column];
 	}

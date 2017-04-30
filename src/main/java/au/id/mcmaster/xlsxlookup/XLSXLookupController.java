@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
+
 
 @RestController
 public class XLSXLookupController {
@@ -24,6 +26,16 @@ public class XLSXLookupController {
 	@RequestMapping(value = "/table/{table}/options", method = RequestMethod.GET)
 	public Map<String,List<String>> optionsMap(@PathVariable String table) {
 		return lookupService.getValueOptionsMap(table);
+	}
+	
+	@RequestMapping(value = "/table/{table}/optionstree", method = RequestMethod.GET)
+	public XLOptionTree optionsTree(@PathVariable String table) {
+		return lookupService.getColumnValuesOptionTree(table);
+	}
+	
+	@RequestMapping(value = "/table/{table}/values", method = RequestMethod.GET)
+	public Map<String,String> valueMap(@PathVariable String table) {
+		return lookupService.getValueMap(table);
 	}
 	
 	@RequestMapping(value = "/table/{table}/fields", method = RequestMethod.GET)

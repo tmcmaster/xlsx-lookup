@@ -60,6 +60,16 @@ public class XLTable {
 		return valueTitles;
 	}
 	
+	public XLOptionTree getColumnsValuesOptionsTree() {
+		XLOptionTree optionsTree = new XLOptionTree();
+		for (int i=0; i<columnData.getNumberOfColumns(); i++)
+		{
+			String[] columnValues = columnData.getColumn(i);
+			optionsTree.addOptions(columnValues);
+		}
+		return optionsTree;
+	}
+	
 	/**
 	 * Get a list of unique options for the row value, and options for each of the column header lines.
 	 * 

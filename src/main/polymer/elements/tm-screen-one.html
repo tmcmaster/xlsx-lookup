@@ -24,6 +24,7 @@
     <iron-ajax auto url="/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
+    <iron-ajax auto url="[[_computeOptionsTreeUrl(table)]]" handle-as="json" last-response="{{fieldOptionTree}}"></iron-ajax>
     <iron-ajax id="value" method="POST" url="[[_computeValueUrl(table)]]" handle-as="json"
                           content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
@@ -50,10 +51,10 @@
       </paper-card>
       <paper-card>
         <div class="card-content">
-          <template is="dom-repeat" items="[[fieldObjects]]" as="field">
+          <template is="dom-repeat" items="[[fieldObjects]]" as="field" index-as="fieldPos">
             <paper-dropdown-menu label="{{field.name}}">
               <paper-listbox class="dropdown-content" selected="{{field.value}}">
-                <template is="dom-repeat" items="[[_getFieldOptions(table,field.name,fieldOptionMap)]]" as="option">
+                <template is="dom-repeat" items="[[_getFieldOptions(table,fieldPos,field.name,fieldOptionMap,fieldOptionTree,fieldObjects)]]" as="option">
                   <paper-item>[[option]]</paper-item>
                 </template>
               </paper-listbox>
@@ -71,13 +72,14 @@
           tableList: { type:Array, notify:true },
           fieldList: { type:Array, notify:true },
           fieldOptionMap: { type:Object, notify:true },
+          fieldOptionTree: { type:Object, notify:true },
           fieldObjects: { type:Array, notify:true, computed: '_computeFieldObjects(fieldList)' },
           selectedTable: { type:Number, notify:true },
           table: { type:String, notify:true, computed: '_computeTable(tableList,selectedTable)'},
           value: { type:String, notify:true, value: '' }
         },
         observers: [
-          'debug(fieldOptionMap)',
+          'debug(fieldOptionTree)',
           '_tableListChanged(tableList)'
         ],
         _computeFieldsUrl: function(table) {
@@ -86,12 +88,19 @@
         _computeOptionsUrl: function(table) {
           return '/table/' + table + '/options';
         },
+        _computeOptionsTreeUrl: function(table) {
+          return '/table/' + table + '/optionstree';
+        },
         _computeValueUrl: function(table) {
           return '/table/' + table + '/value';
         },
-        _getFieldOptions: function(table,fieldName,fieldOptionMap) {
+        _getFieldOptions: function(table,fieldPos,fieldName,fieldOptionMap,fieldOptionTree,fieldObjects) {
           if (fieldOptionMap !== undefined) {
-            return fieldOptionMap[fieldName];
+            var fieldOptions = fieldOptionMap[fieldName];
+            //fieldOptions = filterFieldOptions(fieldOptions, fieldPos, fieldObjects, fieldOptionTree,fieldOptionMap);
+            return fieldOptions;
+          } else {
+            return undefined;
           }
         },
         _createQuery: function(fieldObjects,fieldOptionMap) {
@@ -121,6 +130,30 @@
           console.log('Element tm-screen-one has been created.');
         }
       });
+
+      function filterFieldOptions(fieldOptions, fieldPos, fieldObjects, fieldOptionTree,fieldOptionMap) {
+        if (fieldOptions === undefined) {
+          return fieldOptions;
+        }
+        var otPointer = fieldOptionTree;
+        for (var i=1; i<fieldPos; i++) {
+          const field = fieldObjects[i];
+          const fieldValue = fieldOptionMap[field.name][field.value];
+          otPointer = fieldOptionTree[fieldValue];
+        }
+        const validOptions = [];
+        if (otPointer !== undefined) {
+          fieldOptions.forEach(function(option) {
+            if (option in otPointer) {
+              validOptions.push(option);
+            }
+          });
+          return validOptions;
+        } else {
+          return fieldOptions;
+        }
+      }
+
     })(window.Polymer);
   </script>
 </dom-module>

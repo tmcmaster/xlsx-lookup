@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import au.id.mcmaster.apoi.tableadapter.XLDataGrid;
+import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 import au.id.mcmaster.apoi.tableadapter.XLTable;
 import au.id.mcmaster.apoi.tableadapter.XLTableDefinition;
 import au.id.mcmaster.apoi.tableadapter.XLWorkbook;
@@ -56,6 +57,11 @@ public class XLSXLookupService
 		List<String> values = fields.stream().map(field -> queryMap.get(field)).collect(Collectors.toList());
 		values.toArray(args);
 		return getValue(tableName, args);
+	}
+	
+	public XLOptionTree getColumnValuesOptionTree(String tableName) {
+		XLTable tableAdapter = getTable(tableName);
+		return tableAdapter.getColumnsValuesOptionsTree();
 	}
 	
 	public String getValue(String tableName, String...keys) {
@@ -122,7 +128,7 @@ public class XLSXLookupService
 		return table;
 	}
 	
-	private Map<String,String> getValueMap(String tableName) {
+	public Map<String,String> getValueMap(String tableName) {
 		Map<String,String> valueMap = this.valuesMap.get(tableName);
 		if (valueMap == null)
 		{
