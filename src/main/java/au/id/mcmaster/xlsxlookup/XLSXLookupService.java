@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.id.mcmaster.apoi.tableadapter.XLDataGrid;
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
@@ -22,16 +24,17 @@ import au.id.mcmaster.apoi.tableadapter.XLWorksheet;
 
 public class XLSXLookupService
 {
+	private static final Logger log = LoggerFactory.getLogger(XLSXLookupService.class);
+	
 	private Map<String,XLTableDefinition> tableDefinitions = new HashMap<String,XLTableDefinition>();
 	private Map<String,XLTable> tables = new HashMap<String,XLTable>();
 	private Map<String,Map<String,String>> valuesMap = new HashMap<String,Map<String,String>>();
 	private Map<String,Map<String,List<String>>> keysMap = new HashMap<String,Map<String,List<String>>>();
 	
-	public XLSXLookupService()
+	public XLSXLookupService(String... spreadsheetFileNames)
 	{
 		try {
-			this.tableDefinitions = loadTables("workbooks/Testing.xlsx","workbooks/private/Testing-Private.xlsx");
-
+			this.tableDefinitions = loadTables(spreadsheetFileNames);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,10 +80,14 @@ public class XLSXLookupService
 	
 	private Map<String,XLTableDefinition> loadTables(String... fileNames) throws IOException
 	{
+		log.info("Loading tables");
+		
 		Map<String,XLTableDefinition> tableDefinitionMap = new HashMap<String,XLTableDefinition>();
 		
 		for (String fileName : fileNames) 
 		{
+			log.info("Loading tables from workbook: " + fileName);
+			
 			XLDataGrid valueData = getTableDefinitionData(fileName);
 			//System.out.println("--->>>> " + valueData);
 			for (int i=0; i<valueData.getNumberOfRows(); i++) {
@@ -93,7 +100,9 @@ public class XLSXLookupService
 				}
 			}
 		}
-		
+
+		log.info("Tables have been loaded.");
+
 		return tableDefinitionMap;
 	}
 
@@ -104,6 +113,7 @@ public class XLSXLookupService
 			XLWorkbook workbookAdapter = new XLWorkbook(new XSSFWorkbook(is));
 			XLWorksheet worksheetAdapter = workbookAdapter.getWorksheetAdapter(XLTableDefinition.DEFINITION_TABLE.getWorksheetName());
 			XLDataGrid valueData = worksheetAdapter.getData(XLTableDefinition.DEFINITION_TABLE.getValueDataRectangle());
+			workbookAdapter.close();
 			return valueData;
 		}
 	}

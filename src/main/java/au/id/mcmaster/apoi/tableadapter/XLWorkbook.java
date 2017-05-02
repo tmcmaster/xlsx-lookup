@@ -1,5 +1,7 @@
 package au.id.mcmaster.apoi.tableadapter;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,4 +21,11 @@ public class XLWorkbook {
 		return worksheetAdapter;
 	}
 	
+	public void close() {
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
