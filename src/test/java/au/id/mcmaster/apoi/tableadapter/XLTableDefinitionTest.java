@@ -4,16 +4,18 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class XLTableDefinitionTest {
+	
+	private static final String TEST_FILES = "workbooks/TestSet1.xlsx";
 
 	@Test
 	public void testCreation() {
-		new XLTableDefinition("workbooks/TestSet1.xlsx","TableAdapter",1,1,5,4,1,4);
+		new XLTableDefinition(TEST_FILES,"TableAdapter",1,1,5,4,1,4,"grid",1);
 	}
 	
 	@Test
 	public void testCreationTestRectangleSections() {
 
-		XLTableDefinition tableDefinition = new XLTableDefinition("workbooks/TestSet1.xlsx","TableAdapter",1,1,5,4,1,4);
+		XLTableDefinition tableDefinition = new XLTableDefinition("WorkbookFile","TableAdapter",1,1,5,4,1,4,"grid",1);
 		
 		XLRectangle titleDataRectangle = tableDefinition.getTitleDataRectangle();
 		Assert.assertSame(0, titleDataRectangle.getStartX());
@@ -39,7 +41,8 @@ public class XLTableDefinitionTest {
 		Assert.assertSame(5, valueDataRectangle.getWidth());
 		Assert.assertSame(4, valueDataRectangle.getHeight());		
 
-		Assert.assertSame("workbooks/TestSet1.xlsx", tableDefinition.getWorkbookName());
+		Assert.assertSame("WorkbookFile", tableDefinition.getWorkbookName());
 		Assert.assertSame("TableAdapter", tableDefinition.getWorksheetName());
 	}
+
 }

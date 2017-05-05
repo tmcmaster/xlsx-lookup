@@ -1,7 +1,5 @@
 package au.id.mcmaster.xlsxlookup;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,47 +8,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.id.mcmaster.apoi.tableadapter.XLDataGrid;
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 import au.id.mcmaster.apoi.tableadapter.XLTable;
-import au.id.mcmaster.apoi.tableadapter.XLTableDefinition;
-import au.id.mcmaster.apoi.tableadapter.XLWorkbook;
-import au.id.mcmaster.apoi.tableadapter.XLWorksheet;
+import au.id.mcmaster.apoi.tableadapter.XLTableLoader;
+import au.id.mcmaster.apoi.tableadapter.XLTableLoaderTest;
 
 
 public class XLSXLookupService
 {
 	private static final Logger log = LoggerFactory.getLogger(XLSXLookupService.class);
 	
-	private Map<String,XLTableDefinition> tableDefinitions = new HashMap<String,XLTableDefinition>();
-	private Map<String,XLTable> tables = new HashMap<String,XLTable>();
 	private Map<String,Map<String,String>> valuesMap = new HashMap<String,Map<String,String>>();
 	private Map<String,Map<String,List<String>>> keysMap = new HashMap<String,Map<String,List<String>>>();
 	
+	private XLTableLoader tableLoader;
+	
 	public XLSXLookupService(String... spreadsheetFileNames)
 	{
-		try {
-			this.tableDefinitions = loadTables(spreadsheetFileNames);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.tableLoader = new XLTableLoader(spreadsheetFileNames);
 	}
 	
 	public Collection<String> getTableNames() {
-		return tableDefinitions.keySet();
+		return tableLoader.getTableNames();
 	}
 	
 	public Collection<String> getFieldNames(String table) {
-		XLTable tableAdapter = getTable(table);
-		return tableAdapter.getColumnDataTitles();
+		XLTable tableAdapter = tableLoader.getTable(table);
+		return tableAdapter.getColumnDataTitles(true);
 	}
 	
 	public Map<String,List<String>> getValueOptionsMap(String table) {
-		XLTable tableAdapter = getTable(table);
+		XLTable tableAdapter = tableLoader.getTable(table);
 		return tableAdapter.getValueOptionsMap();
 	}
 	
@@ -63,7 +54,7 @@ public class XLSXLookupService
 	}
 	
 	public XLOptionTree getColumnValuesOptionTree(String tableName) {
-		XLTable tableAdapter = getTable(tableName);
+		XLTable tableAdapter = tableLoader.getTable(tableName);
 		return tableAdapter.getColumnsValuesOptionsTree();
 	}
 	
@@ -78,65 +69,7 @@ public class XLSXLookupService
 		return value;
 	}
 	
-	private Map<String,XLTableDefinition> loadTables(String... fileNames) throws IOException
-	{
-		log.info("Loading tables");
-		
-		Map<String,XLTableDefinition> tableDefinitionMap = new HashMap<String,XLTableDefinition>();
-		
-		for (String fileName : fileNames) 
-		{
-			log.info("Loading tables from workbook: " + fileName);
-			
-			XLDataGrid valueData = getTableDefinitionData(fileName);
-			//System.out.println("--->>>> " + valueData);
-			for (int i=0; i<valueData.getNumberOfRows(); i++) {
-				String[] row = valueData.getRow(i);
-				String tableName = row[0];
-				if (tableName != null && tableName.trim().length() > 0) {
-					XLTableDefinition tableDefinition = new XLTableDefinition(fileName, row);
-					//System.out.println("-->> Added a table definition: " + tableName);
-					tableDefinitionMap.put(tableName, tableDefinition);
-				}
-			}
-		}
 
-		log.info("Tables have been loaded.");
-
-		return tableDefinitionMap;
-	}
-
-	private XLDataGrid getTableDefinitionData(String fileName) throws IOException {
-		
-		try (InputStream is = XLTable.class.getClassLoader().getResourceAsStream(fileName))
-		{
-			XLWorkbook workbookAdapter = new XLWorkbook(new XSSFWorkbook(is));
-			XLWorksheet worksheetAdapter = workbookAdapter.getWorksheetAdapter(XLTableDefinition.DEFINITION_TABLE.getWorksheetName());
-			XLDataGrid valueData = worksheetAdapter.getData(XLTableDefinition.DEFINITION_TABLE.getValueDataRectangle());
-			workbookAdapter.close();
-			return valueData;
-		}
-	}
-	
-	private XLTable getTable(String tableName) {
-		XLTable table = tables.get(tableName);
-		
-		if (table == null) {
-			try
-			{
-				XLTableDefinition tableDefinition = this.tableDefinitions.get(tableName);
-				table = new XLTable(tableDefinition);
-				tables.put(tableName, table);
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException("Could not load required value data: " + tableName, e);
-			}
-			
-		}
-		
-		return table;
-	}
 	
 	public Map<String,String> getValueMap(String tableName) {
 		Map<String,String> valueMap = this.valuesMap.get(tableName);
@@ -144,7 +77,7 @@ public class XLSXLookupService
 		{
 			try
 			{
-				XLTable tableAdapter = getTable(tableName);
+				XLTable tableAdapter = tableLoader.getTable(tableName);
 				valueMap = tableAdapter.getValueMap();
 				this.valuesMap.put(tableName,valueMap);
 			}
@@ -154,5 +87,14 @@ public class XLSXLookupService
 			}
 		}
 		return valueMap;
+	}
+	
+	public List<String> getCalulatedFields(String tableName, String calculation) {
+		List<String> fieldNames = new ArrayList<String>();
+		
+//		XLTable tableAdapter = getTable(tableName);
+//		 tableAdapter.get
+		
+		 return fieldNames;
 	}
 }

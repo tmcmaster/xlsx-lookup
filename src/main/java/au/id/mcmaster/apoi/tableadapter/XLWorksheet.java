@@ -7,8 +7,12 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XLWorksheet {
+	private static final Logger log = LoggerFactory.getLogger(XLWorksheet.class);
+	
 	private Sheet worksheet;
 	private FormulaEvaluator evaluator;
 	
@@ -19,23 +23,30 @@ public class XLWorksheet {
 	}
 	
 	private void flattenMergedCells() {
+		log.debug("Flattening merged cells: " + worksheet.getSheetName());
+		
 		// remove the merged cells, and duplicate the data
 		while (worksheet.getNumMergedRegions() > 0) {
 			CellRangeAddress region = worksheet.getMergedRegion(0);
-			int rowNum = region.getFirstRow();
 		    int colStart = region.getFirstColumn();
 		    int colEnd = region.getLastColumn();
-			Row row = worksheet.getRow(rowNum);
-			Cell cell = row.getCell(colStart);
+		    int rowStart = region.getFirstRow();
+		    int rowEnd = region.getLastRow();
+		    
+			Row templateRow = worksheet.getRow(rowStart);
+			Cell cell = templateRow.getCell(colStart);
 		    String value = getCellStringValue(cell);
 		    
-		    System.out.println("Merged: " + colStart + " : " + colEnd + " : " + value);
+		    log.debug("Merged: " + colStart + " : " + colEnd + " : " + value);
 		    
 		    worksheet.removeMergedRegion(0);
-		    for (int j=colStart+1; j<=colEnd; j++) {
-		        Cell myCell = row.getCell(j);
-		        myCell.setCellValue(value);
-		    }				
+		    for (int r=rowStart; r<=rowEnd; r++) {
+		    	Row row = worksheet.getRow(r);
+			    for (int j=colStart; j<=colEnd; j++) {
+			        Cell myCell = row.getCell(j);
+			        myCell.setCellValue(value);
+			    }				
+		    }
 		}
 	}
 	
@@ -70,6 +81,10 @@ public class XLWorksheet {
 	}
 
 	public XLDataGrid getData(XLRectangle table) {
+		int numberOfRows = worksheet.getLastRowNum();
+		if (table.getEndY() > numberOfRows) {
+			throw new IndexOutOfBoundsException(String.format("Rectangle falls outside the sheet: %s(%d): %s", worksheet.getSheetName(), numberOfRows, table));
+		}
 		int width = table.getWidth();
 		int height = table.getHeight();
 		String[][] columnDataRows = new String[height][width];

@@ -1,8 +1,10 @@
 package au.id.mcmaster.apoi.tableadapter;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,12 +24,14 @@ public class XLTable {
 	private XLDataGrid valueData;
 	private XLDataGrid columnTitles;
 	
-	
 	public XLTable(XLTableDefinition tableDefinition) throws IOException
 	{
 		String fileName = tableDefinition.getWorkbookName();
 		try (InputStream is = XLTable.class.getClassLoader().getResourceAsStream(fileName))
 		{
+			if (is == null) {
+				throw new FileNotFoundException("Could not find the workbook: " + fileName);
+			}
 			XLWorkbook workbookAdapter = new XLWorkbook(new XSSFWorkbook(is));
 			XLWorksheet worksheetAdapter = workbookAdapter.getWorksheetAdapter(tableDefinition.getWorksheetName());
 			this.columnData = worksheetAdapter.getData(tableDefinition.getColumnDataRectangle());
@@ -35,6 +39,10 @@ public class XLTable {
 			this.valueData = worksheetAdapter.getData(tableDefinition.getValueDataRectangle());
 			this.columnTitles = worksheetAdapter.getData(tableDefinition.getTitleDataRectangle());
 		}
+	}
+	
+	protected XLDataGrid getColumnDataGrid() {
+		return this.columnData;
 	}
 	
 	public String toString() {
@@ -53,6 +61,9 @@ public class XLTable {
 	}
 	
 	public List<String> getColumnDataTitles() {
+		return getColumnDataTitles(false);
+	}
+	public List<String> getColumnDataTitles(boolean addANB) {
 		String[] titleArray = columnTitles.getColumn(0);
 		List<String> valueTitles = new ArrayList<String>();
 		valueTitles.add("ANB");
@@ -79,7 +90,7 @@ public class XLTable {
 		
 		Map<String,List<String>> valueOptionsMap = new HashMap<String,List<String>>();
 		
-		List<String> valueTitles = getColumnDataTitles();
+		List<String> valueTitles = getColumnDataTitles(true);
 		
 		// row data unique value options
 		String rowDataLabel = valueTitles.get(0);
@@ -102,14 +113,15 @@ public class XLTable {
 		Map<String,String> valueMap = new HashMap<String,String>();
 		
 		String[] columnKeys = columnData.joinColumnAll(" | ");
-		System.out.println("Column Keys: " + columnKeys.length);
+		System.out.println("Column Keys: " + columnKeys.length + " : " + Arrays.toString(columnKeys));
 		
 		String[] rowKeys = rowData.joinRowAll(" | ");
-		System.out.println("Row Keys: " + rowKeys.length);
+		System.out.println("Row Keys: " + rowKeys.length + " : " + Arrays.toString(rowKeys));
 		
 		for (int r=0; r<rowKeys.length; r++) {
 			for (int c=0; c<columnKeys.length; c++) {
-				String key = String.format("%s | %s", rowKeys[r], columnKeys[c]);
+				String seperator = (columnKeys.length > 0 && rowKeys.length > 0 ? " | " : "");
+				String key = String.format("%s%s%s", rowKeys[r], seperator, columnKeys[c]);
 				String value = valueData.getValue(r,c);
 				System.out.println(String.format("%10.10s = %s", value, key));
 				valueMap.put(key, value);

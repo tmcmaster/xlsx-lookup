@@ -59,7 +59,7 @@ public class XLDataGrid {
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0; i<data.length; i++) {
 			if (i > 0) {
-				buffer.append(" | ");
+				buffer.append(seperator);
 			}
 			buffer.append(data[i]);
 		}

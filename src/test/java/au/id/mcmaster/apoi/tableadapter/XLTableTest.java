@@ -1,5 +1,7 @@
 package au.id.mcmaster.apoi.tableadapter;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,33 +11,51 @@ import org.junit.Test;
 
 public class XLTableTest {
 	private static final String FILE_NAME = "workbooks/TestSet1.xlsx";
-	private static XLTableDefinition TABLE_ADAPTER = new XLTableDefinition(FILE_NAME,"TableAdapter",1,1,5,4,1,4);
-	private static XLTableDefinition TABLE_ADAPTER2 = new XLTableDefinition(FILE_NAME,"TableAdapter2",3,8,5,3,1,4);
+	private static XLTableDefinition GRID_V1_SIMPLE = new XLTableDefinition(FILE_NAME,"Grid V1 Simple",1,1,5,4,1,4,"grid",1);
+	private static XLTableDefinition GRID_V1_COMPLEX = new XLTableDefinition(FILE_NAME,"Grid V1 Complex",3,8,5,3,1,4,"grid",1);
 
 	@Test
 	public void testCreate() throws Exception 
 	{
-		new XLTable(TABLE_ADAPTER);
-		new XLTable(TABLE_ADAPTER2);
+		new XLTable(GRID_V1_SIMPLE);
+		new XLTable(GRID_V1_COMPLEX);
 	}
 	
 	@Test
 	public void testTopLeftCorner() throws Exception {
-		System.out.println(TABLE_ADAPTER);
-		System.out.println(new XLTable(TABLE_ADAPTER));
+		System.out.println(GRID_V1_SIMPLE);
+		System.out.println(new XLTable(GRID_V1_SIMPLE));
 	}
 
 	@Test
 	public void testMiddleOfSheet() throws Exception {
-		System.out.println(TABLE_ADAPTER2);
-		System.out.println(new XLTable(TABLE_ADAPTER));
+		System.out.println(GRID_V1_COMPLEX);
+		System.out.println(new XLTable(GRID_V1_COMPLEX));
 	}
+	
+	@Test
+	public void testMergedRowCells() throws Exception {
+		System.out.println(GRID_V1_COMPLEX);
+		XLTable table = new XLTable(GRID_V1_COMPLEX);
+		System.out.println(table);
+		String[][] expected = new String[][] {
+			new String[] { "BC:13", "BC:13", "D:13", "E:13", "F:13-15" },
+			new String[] { "BCD:14-15", "BCD:14-15", "BCD:14-15", "E:14", "F:13-15" },
+			new String[] { "BCD:14-15", "BCD:14-15", "BCD:14-15", "E:15", "F:13-15" }
+		};
+		XLDataGrid actual = table.getColumnDataGrid();
+		for (int r=0; r<expected.length; r++) {
+			for (int c=0; c<expected.length; c++) {
+				Assert.assertEquals(expected[r][c], actual.getValue(r,c));
+			}
+		}
+ 	}
 	
 	@Test
 	public void testGetColumnTitles() throws Exception
 	{
-		XLTable table = new XLTable(TABLE_ADAPTER);
-		List<String> columnTitles = table.getColumnDataTitles();
+		XLTable table = new XLTable(GRID_V1_SIMPLE);
+		List<String> columnTitles = table.getColumnDataTitles(true);
 		String[] expected = new String[] {"ANB","a","b","c","d"};
 		for (int i=0;i<columnTitles.size(); i++) {
 			Assert.assertTrue(expected[i].equals(columnTitles.get(i)));
@@ -45,7 +65,7 @@ public class XLTableTest {
 	@Test
 	public void getValueMap() throws Exception
 	{
-		XLTable table = new XLTable(TABLE_ADAPTER);
+		XLTable table = new XLTable(GRID_V1_SIMPLE);
 		
 		Map<String,String> expected = new HashMap<String,String>();
 		expected.put("1 | BCD:1 | BC:2 | B:3 | BCDEF:4", "1");
@@ -84,7 +104,7 @@ public class XLTableTest {
 	@Test
 	public void testGetValueOptionsMap() throws Exception
 	{
-		XLTable table = new XLTable(TABLE_ADAPTER);
+		XLTable table = new XLTable(GRID_V1_SIMPLE);
 		
 		Map<String,String[]> expectedMap = new HashMap<String,String[]>();
 		expectedMap.put("a", new String[] {"BCD:1","E:1","F:1"});
