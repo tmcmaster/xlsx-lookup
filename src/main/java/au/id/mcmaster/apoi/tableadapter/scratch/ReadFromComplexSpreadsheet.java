@@ -27,7 +27,7 @@ public class ReadFromComplexSpreadsheet {
 		
 		try {
 
-			XLTableDefinition tableDefinition = new XLTableDefinition(FILE_NAME,"SecondTab",1,1,5,4,1,4,"grid",1);
+			XLTableDefinition tableDefinition = new XLTableDefinition(FILE_NAME,"SecondTab","SecondTab",1,1,5,4,1,4,"grid",1);
 			
 			System.out.println("Column Data: " + tableDefinition.getColumnDataRectangle());
 			System.out.println("   Row Data: " + tableDefinition.getRowDataRectangle());

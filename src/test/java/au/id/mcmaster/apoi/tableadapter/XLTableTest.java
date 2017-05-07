@@ -1,7 +1,5 @@
 package au.id.mcmaster.apoi.tableadapter;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +9,8 @@ import org.junit.Test;
 
 public class XLTableTest {
 	private static final String FILE_NAME = "workbooks/TestSet1.xlsx";
-	private static XLTableDefinition GRID_V1_SIMPLE = new XLTableDefinition(FILE_NAME,"Grid V1 Simple",1,1,5,4,1,4,"grid",1);
-	private static XLTableDefinition GRID_V1_COMPLEX = new XLTableDefinition(FILE_NAME,"Grid V1 Complex",3,8,5,3,1,4,"grid",1);
+	private static XLTableDefinition GRID_V1_SIMPLE = new XLTableDefinition(FILE_NAME,"Grid V1 Simple","Grid_V1_Simple",1,1,5,4,1,4,"grid",1);
+	private static XLTableDefinition GRID_V1_COMPLEX = new XLTableDefinition(FILE_NAME,"Grid V1 Complex","Grid_V1_Simple",3,8,5,3,1,4,"grid",1);
 
 	@Test
 	public void testCreate() throws Exception 

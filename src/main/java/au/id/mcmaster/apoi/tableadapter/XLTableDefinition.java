@@ -2,42 +2,55 @@ package au.id.mcmaster.apoi.tableadapter;
 
 public class XLTableDefinition
 {
-	public static final XLTableDefinition DEFINITION_TABLE = new XLTableDefinition(null,"Definitions",1,2,10,2,1,25,"grid",1);
+	public static final XLTableDefinition DEFINITION_TABLE = new XLTableDefinition(null,"Definitions","Definitions",1,2,11,2,1,25,"grid",1);
 
 	private String workbookName;
 	private String worksheetName;
+	private String tableAlias;
+	private String type;
+	private int version;
+	
 	private XLRectangle columnData = new XLRectangle();
 	private XLRectangle rowData = new XLRectangle();
 	private XLRectangle valueData = new XLRectangle();
 	private XLRectangle titleData = new XLRectangle();
 
-	public XLTableDefinition(String workbookName, String worksheetName, int tableStartX, int tableStartY, 
-			int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight, String type, int version) {
-		init(workbookName, worksheetName, tableStartX, tableStartY,
-				columnDataWidth, columnDataHeight, rowDataWidth, rowDataHeight,type,version);
+	public XLTableDefinition(String workbookName, String worksheetName, String tableAlias,
+			int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, 
+			int rowDataWidth, int rowDataHeight, String type, int version) {
+		this.type = type;
+		this.version = version;
+		init(workbookName, worksheetName, tableAlias,
+				tableStartX, tableStartY, columnDataWidth, columnDataHeight, 
+				rowDataWidth, rowDataHeight, type, version);
 	}
 	
 	public XLTableDefinition(String fileName, String... defintionData) {
 		String workbookName = fileName;
-		String worksheetName = defintionData[1];
-		int tableStartX = Integer.parseInt(defintionData[2]);
-		int tableStartY = Integer.parseInt(defintionData[3]);
-		int columnDataWidth = Integer.parseInt(defintionData[4]);
-		int columnDataHeight = Integer.parseInt(defintionData[5]);
-		int rowDataWidth = Integer.parseInt(defintionData[6]);
-		int rowDataHeight = Integer.parseInt(defintionData[7]);
-		String type = defintionData[8];
-		int version = Integer.parseInt(defintionData[9]);
+		String tableAlias = defintionData[1];
+		String worksheetName = defintionData[2];
+		int tableStartX = Integer.parseInt(defintionData[3]);
+		int tableStartY = Integer.parseInt(defintionData[4]);
+		int columnDataWidth = Integer.parseInt(defintionData[5]);
+		int columnDataHeight = Integer.parseInt(defintionData[6]);
+		int rowDataWidth = Integer.parseInt(defintionData[7]);
+		int rowDataHeight = Integer.parseInt(defintionData[8]);
+		String type = defintionData[9];
+		int version = Integer.parseInt(defintionData[10]);
 		
-		init(workbookName, worksheetName, tableStartX, tableStartY,
-				columnDataWidth, columnDataHeight, rowDataWidth, rowDataHeight, type, version);
+		init(workbookName, worksheetName, tableAlias,
+				tableStartX, tableStartY, columnDataWidth, columnDataHeight, 
+				rowDataWidth, rowDataHeight, type, version);
 	}
 	
-	private void init(String workbookName, String worksheetName, int tableStartX, int tableStartY, 
-			int columnDataWidth, int columnDataHeight, int rowDataWidth, int rowDataHeight, String type, int version) {
+	private void init(String workbookName, String worksheetName, String tableAlias, 
+			int tableStartX, int tableStartY, int columnDataWidth, int columnDataHeight, 
+			int rowDataWidth, int rowDataHeight, String type, int version) {
 		this.workbookName = workbookName;
 		this.worksheetName = worksheetName;
-		
+		this.tableAlias = tableAlias;
+		this.type = type;
+		this.version = version;
 		String gridType = type + "/" + version;
 		if ("grid/1".equals(gridType)) {
 			initGrid1(tableStartX, tableStartY,columnDataWidth, columnDataHeight, rowDataWidth, rowDataHeight);
@@ -160,5 +173,29 @@ public class XLTableDefinition
 	
 	public XLRectangle getTitleDataRectangle() {
 		return titleData;
+	}
+
+	public String getTableAlias() {
+		return tableAlias;
+	}
+
+	public void setTableAlias(String tableAlias) {
+		this.tableAlias = tableAlias;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 }
