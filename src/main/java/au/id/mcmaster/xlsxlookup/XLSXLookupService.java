@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.id.mcmaster.apoi.tableadapter.XLCalculator;
+import au.id.mcmaster.apoi.tableadapter.XLLookup;
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 import au.id.mcmaster.apoi.tableadapter.XLTable;
 import au.id.mcmaster.apoi.tableadapter.XLTableLoader;
@@ -35,9 +37,9 @@ public class XLSXLookupService
 		return tableLoader.getTableNames();
 	}
 	
-	public Collection<String> getFieldNames(String table) {
+	public List<String> getFieldNames(String table) {
 		XLTable tableAdapter = tableLoader.getTable(table);
-		return tableAdapter.getColumnDataTitles(true);
+		return new ArrayList<String>(tableAdapter.getColumnDataTitles(true));
 	}
 	
 	public Map<String,List<String>> getValueOptionsMap(String table) {
@@ -69,7 +71,10 @@ public class XLSXLookupService
 		return value;
 	}
 	
-
+	public String getLookupValue(String lookupName, Map<String,String> inputMap) {
+		XLCalculator calculator = new XLCalculator(tableLoader);
+		return calculator.lookup(lookupName, inputMap);
+	}
 	
 	public Map<String,String> getValueMap(String tableName) {
 		Map<String,String> valueMap = this.valuesMap.get(tableName);
@@ -87,6 +92,11 @@ public class XLSXLookupService
 			}
 		}
 		return valueMap;
+	}
+	
+	public List<String> getLookupTableNames() {
+		
+		return new ArrayList<String>(this.tableLoader.getLookupTableNames());
 	}
 	
 	public List<String> getCalulatedFields(String tableName, String calculation) {

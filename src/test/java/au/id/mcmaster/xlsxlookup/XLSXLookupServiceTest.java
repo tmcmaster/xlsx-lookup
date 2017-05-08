@@ -1,14 +1,14 @@
 package au.id.mcmaster.xlsxlookup;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import org.junit.Assert;
-
 public class XLSXLookupServiceTest {
-	private static final String TEST_FILES = "workbooks/Testing.xlsx";
+	private static final String[] TEST_FILES = new String[] {"workbooks/Testing.xlsx", "workbooks/TestSet1.xlsx"};
 
 	@Test
 	public void testCreate() {
@@ -31,6 +31,9 @@ public class XLSXLookupServiceTest {
 	public void testCalculations()
 	{
 		XLSXLookupService service = new XLSXLookupService(TEST_FILES);
-		service.getValue("Test 2");
+		List<String> lookupNames = service.getLookupTableNames();
+		System.out.println(lookupNames);
+		String value = service.getLookupValue("Subtract", null);
+		System.out.println(value);
 	}
 }

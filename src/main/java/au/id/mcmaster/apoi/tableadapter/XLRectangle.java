@@ -39,4 +39,7 @@ public class XLRectangle {
 	public void setEndY(int endY) {
 		this.endY = endY;
 	}
+	public boolean isNull() {
+		return (startX < 0 || endY < 0 || startX < 0 || endY < 0);
+	}
 }

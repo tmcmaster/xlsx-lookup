@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 public class XLDataGrid {
+	public static final XLDataGrid EMPTY = new XLDataGrid(new String[0][0]);
+	
 	private String[][] data;
 	
 	public XLDataGrid(String[][] data) {
@@ -43,6 +45,9 @@ public class XLDataGrid {
 	}
 	
 	public String[] joinColumnAll(String seperator) {
+		if (data.length == 0) {
+			return new String[0];
+		}
 		String[] columnDataAll = new String[data[0].length];
 		for (int i=0; i<data[0].length; i++) {
 			columnDataAll[i] = joinColumn(i, seperator);

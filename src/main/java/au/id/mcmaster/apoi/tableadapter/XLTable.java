@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 /**
  * TODO: Need to support row data columns
@@ -23,9 +24,13 @@ public class XLTable {
 	private XLDataGrid rowData;
 	private XLDataGrid valueData;
 	private XLDataGrid columnTitles;
+	private XLDataGrid rowTitles;	
+	private String type;
+	private String name;
 	
 	public XLTable(XLTableDefinition tableDefinition) throws IOException
 	{
+		this.type = tableDefinition.getType();
 		String fileName = tableDefinition.getWorkbookName();
 		try (InputStream is = XLTable.class.getClassLoader().getResourceAsStream(fileName))
 		{
@@ -38,9 +43,28 @@ public class XLTable {
 			this.rowData = worksheetAdapter.getData(tableDefinition.getRowDataRectangle());
 			this.valueData = worksheetAdapter.getData(tableDefinition.getValueDataRectangle());
 			this.columnTitles = worksheetAdapter.getData(tableDefinition.getTitleDataRectangle());
+			this.rowTitles = getRowTitles(worksheetAdapter, tableDefinition);
 		}
 	}
 	
+	private XLDataGrid getRowTitles(XLWorksheet worksheetAdapter, XLTableDefinition tableDefinition) {
+		if ("grid".equals(tableDefinition.getType()))
+		{
+			if (tableDefinition.getVersion() == 1) {
+				return new XLDataGrid(new String[][] {new String[] {"ANB"}});
+				
+			} else {
+				return worksheetAdapter.getData(tableDefinition.getRowTitleDataRectangle());				
+			}
+		}
+		else if ("lookup".equals(tableDefinition.getType()))
+		{
+			return worksheetAdapter.getData(tableDefinition.getRowTitleDataRectangle());
+		}
+		
+		throw new ResourceNotFoundException("Table type is not supported: " + tableDefinition.getType() + ":" + tableDefinition.getVersion());
+	}
+
 	protected XLDataGrid getColumnDataGrid() {
 		return this.columnData;
 	}
@@ -48,14 +72,17 @@ public class XLTable {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		
+		buffer.append("=> " + name + "(" + type + ") <=\n");
 		buffer.append("== Column Data ==\n");
 		buffer.append(columnData);
 		buffer.append("== Row Data ==\n");
 		buffer.append(rowData);
 		buffer.append("== Value Data ==\n");
 		buffer.append(valueData);
-		buffer.append("== Title Data ==\n");
+		buffer.append("== Column Titles ==\n");
 		buffer.append(columnTitles);
+		buffer.append("== Row Titles ==\n");
+		buffer.append(rowTitles);
 		
 		return buffer.toString();
 	}
@@ -63,6 +90,14 @@ public class XLTable {
 	public List<String> getColumnDataTitles() {
 		return getColumnDataTitles(false);
 	}
+	
+	public List<String> getRowDataTitles() {
+		String[] titleArray = rowTitles.getRow(0);
+		List<String> rowTitles = new ArrayList<String>();
+		Collections.addAll(rowTitles, titleArray);
+		return rowTitles;
+	}
+	
 	public List<String> getColumnDataTitles(boolean addANB) {
 		String[] titleArray = columnTitles.getColumn(0);
 		List<String> valueTitles = new ArrayList<String>();
@@ -129,5 +164,37 @@ public class XLTable {
 		}
 		
 		return valueMap;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public XLDataGrid getColumnData() {
+		return columnData;
+	}
+
+	public XLDataGrid getRowData() {
+		return rowData;
+	}
+
+	public XLDataGrid getValueData() {
+		return valueData;
+	}
+
+	public XLDataGrid getColumnTitles() {
+		return columnTitles;
 	}
 }

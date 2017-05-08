@@ -16,7 +16,8 @@ public class XLTableLoader {
 	
 	private Map<String,XLTableDefinition> tableDefinitions = new HashMap<String,XLTableDefinition>();
 	private Map<String,XLTable> tables = new HashMap<String,XLTable>();
-	private Map<String,XLTable> lookups = new HashMap<String,XLTable>();
+	private Map<String,XLTable> lookupTables = new HashMap<String,XLTable>();
+	private Map<String,XLLookup> lookups = new HashMap<String,XLLookup>();
 	private Map<String,String> aliases = new HashMap<String,String>();
 	
 	public XLTableLoader(String... spreadsheetFileNames)
@@ -32,15 +33,13 @@ public class XLTableLoader {
 		return tables.keySet();
 	}
 	
-	public Collection<String> getLookupNames() {
-		return lookups.keySet();
+	public Collection<String> getLookupTableNames() {
+		return lookupTables.keySet();
 	}
 	
 	private void loadTables(String... fileNames) throws IOException
 	{
 		log.info("Loading tables");
-		
-		//Map<String,XLTableDefinition> tableDefinitionMap = new HashMap<String,XLTableDefinition>();
 		
 		for (String fileName : fileNames) 
 		{
@@ -51,6 +50,8 @@ public class XLTableLoader {
 			for (int i=0; i<valueData.getNumberOfRows(); i++) {
 				String[] row = valueData.getRow(i);
 				String tableName = row[0];
+				String tableAlias = row[1];
+				this.aliases.put(tableAlias, tableName);
 				if (tableName != null && tableName.trim().length() > 0 && !tableName.startsWith("#")) {
 					XLTableDefinition tableDefinition = new XLTableDefinition(fileName, row);
 					log.debug("  -->> Added a table definition: " + tableName);
@@ -61,59 +62,87 @@ public class XLTableLoader {
 		}
 
 		log.info("Tables have been loaded.");
-
-		//return tableDefinitionMap;
 	}
 
-	public XLTable getTable(String tableName) {
+	public XLTable getTable(String tableNameOrAlias) {
+		String tableName = tableNameOrAlias;
 		XLTable table = tables.get(tableName);
-		
-		if (table == null) {
-			table = createTable(tableName, "grid");
-			tables.put(tableName, table);
+		if (table == null)
+		{
+			tableName = aliases.get(tableName);
+			table = tables.get(tableName);
 		}
-		
+		if (table == null) {
+			throw new ResourceNotFoundException("Could not find table: " + tableNameOrAlias);
+		}
 		return table;
 	}
 	
-	public XLTable getLookup(String tableName) {
-		XLTable table = lookups.get(tableName);
-		
-		if (table == null) {
-			table = createTable(tableName, "lookup");
-			lookups.put(tableName, table);
+	public XLTable getLookupTable(String tableNameOrAlias) {
+		String tableName = tableNameOrAlias;
+		XLTable table = lookupTables.get(tableName);		
+
+		if (table == null)
+		{
+			tableName = aliases.get(tableName);
+			table = tables.get(tableName);
 		}
-		
-		return table;		
+		if (table == null) {
+			throw new ResourceNotFoundException("Could not find table: " + tableNameOrAlias);
+		}
+		return table;
+	}
+	
+	public XLLookup getLookup(String tableName) {
+		return lookups.get(tableName);		
 	}
 	
 	private XLTable createTable(String tableNameOrAlias, String type) {
 		XLTableDefinition tableDefinition = this.tableDefinitions.get(tableNameOrAlias);
+		String tableName = tableNameOrAlias;
 		if (tableDefinition == null) {
-			String tableName = this.aliases.get(tableNameOrAlias);
+			tableName = this.aliases.get(tableNameOrAlias);
 			if (tableName != null) {
-				tableDefinition = this.tableDefinitions.get(tableNameOrAlias);
+				tableDefinition = this.tableDefinitions.get(tableName);
 			} else {
 				throw new ResourceNotFoundException("Could not find the requested table: " + tableNameOrAlias);
 			}
 		}
-		if (type.equals(tableDefinition.getType())) {
-			try
-			{
-				log.debug("About to load table: " + tableDefinition);
-				return new XLTable(tableDefinition);
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException("Could not load required value data: " + tableNameOrAlias, e);
-			}
-		}
-		else
+		
+		try
 		{
-			throw new ResourceNotFoundException(String.format("Table(%s) was not of type(%s): %s", tableNameOrAlias, type, tableDefinition.getType()));
-		}		
+			log.debug("About to load table: " + tableDefinition);
+			XLTable table = new XLTable(tableDefinition);
+	
+			if ("grid".equals(table.getType())) {
+				tables.put(tableName, table);
+			} else if ("lookup".equals(table.getType())) {
+				lookupTables.put(tableName, table);
+				createLookups(table);
+				
+			}
+			
+			if (!type.equals(table.getType())) {
+				throw new ResourceNotFoundException(String.format("Table(%s) was not of type(%s): %s", tableName, type, table.getType()));
+			}
+	
+			return table;
+		} 
+		catch (IOException e)
+		{
+			throw new ResourceNotFoundException("Could not find the requested table: " + tableNameOrAlias);
+		}
 	}
 	
+	private void createLookups(XLTable table) {
+		String[] lookupNames = table.getRowData().getColumn(0);
+		String[] lookupValues = table.getValueData().getColumn(0);
+		for (int i=0; i<lookupNames.length; i++) {
+			XLLookup lookup = new XLLookup(lookupNames[i], lookupValues[i]);
+			this.lookups.put(lookupNames[i], lookup);
+		}
+	}
+
 	private XLDataGrid getTableDefinitionData(String fileName) throws IOException {
 		
 		try (InputStream is = XLTable.class.getClassLoader().getResourceAsStream(fileName))

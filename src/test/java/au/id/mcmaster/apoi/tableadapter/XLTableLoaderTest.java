@@ -55,7 +55,8 @@ public class XLTableLoaderTest {
 	@Test
 	public void testLookup1() {
 		XLTableLoader tableLoader = new XLTableLoader("workbooks/TestSet1.xlsx");
-		XLTable table = tableLoader.getTable("Lookup - Version 1");
+		XLTable table = tableLoader.getLookupTable("Lookup - Version 1");
+		System.out.println(table);
 		Map<String,String> valueMap = table.getValueMap();
 		System.out.println(valueMap);
 	}
@@ -70,7 +71,7 @@ public class XLTableLoaderTest {
 	@Test
 	public void testLookupNames() {
 		XLTableLoader tableLoader = new XLTableLoader("workbooks/TestSet1.xlsx");
-		Collection<String> lookupNames = tableLoader.getLookupNames();
+		Collection<String> lookupNames = tableLoader.getLookupTableNames();
 		System.out.println("Lookup Names: " + lookupNames);
 	}
 }

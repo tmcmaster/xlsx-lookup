@@ -9,13 +9,13 @@ public class XLTableDefinitionTest {
 
 	@Test
 	public void testCreation() {
-		new XLTableDefinition(TEST_FILES,"TableAdapter","TableAlias",1,1,5,4,1,4,"grid",1);
+		new XLTableDefinition(TEST_FILES,"worksheet","table","alias",1,1,5,4,1,4,"grid",1);
 	}
 	
 	@Test
 	public void testCreationTestRectangleSections() {
 
-		XLTableDefinition tableDefinition = new XLTableDefinition("WorkbookFile","TabName","TableAlias",1,1,5,4,1,4,"grid",1);
+		XLTableDefinition tableDefinition = new XLTableDefinition("WorkbookFile","TabName","TableName","TableAlias",1,1,5,4,1,4,"grid",1);
 		
 		XLRectangle titleDataRectangle = tableDefinition.getTitleDataRectangle();
 		Assert.assertSame(0, titleDataRectangle.getStartX());
@@ -42,6 +42,7 @@ public class XLTableDefinitionTest {
 		Assert.assertSame(4, valueDataRectangle.getHeight());		
 
 		Assert.assertSame("WorkbookFile", tableDefinition.getWorkbookName());
+		Assert.assertSame("TableName", tableDefinition.getTableName());
 		Assert.assertSame("TabName", tableDefinition.getWorksheetName());
 		Assert.assertSame("TableAlias", tableDefinition.getTableAlias());
 	}

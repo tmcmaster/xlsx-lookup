@@ -81,6 +81,9 @@ public class XLWorksheet {
 	}
 
 	public XLDataGrid getData(XLRectangle table) {
+		if (table.isNull()) {
+			return XLDataGrid.EMPTY;
+		}
 		int numberOfRows = worksheet.getLastRowNum();
 		if (table.getEndY() > numberOfRows) {
 			throw new IndexOutOfBoundsException(String.format("Rectangle falls outside the sheet: %s(%d): %s", worksheet.getSheetName(), numberOfRows, table));
