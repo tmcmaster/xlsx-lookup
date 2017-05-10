@@ -31,6 +31,8 @@ public class XLTable {
 	public XLTable(XLTableDefinition tableDefinition) throws IOException
 	{
 		this.type = tableDefinition.getType();
+		this.name = tableDefinition.getTableName();
+		
 		String fileName = tableDefinition.getWorkbookName();
 		try (InputStream is = XLTable.class.getClassLoader().getResourceAsStream(fileName))
 		{
@@ -87,6 +89,15 @@ public class XLTable {
 		return buffer.toString();
 	}
 	
+	public List<String> getFieldList() {
+		List<String> fields = new ArrayList<String>();
+		
+		fields.addAll(getRowDataTitles());
+		fields.addAll(getColumnDataTitles());
+		
+		return fields;
+	}
+	
 	public List<String> getColumnDataTitles() {
 		return getColumnDataTitles(false);
 	}
@@ -101,7 +112,9 @@ public class XLTable {
 	public List<String> getColumnDataTitles(boolean addANB) {
 		String[] titleArray = columnTitles.getColumn(0);
 		List<String> valueTitles = new ArrayList<String>();
-		valueTitles.add("ANB");
+		if (addANB) {
+			valueTitles.add("ANB");
+		}
 		Collections.addAll(valueTitles, titleArray);
 		return valueTitles;
 	}

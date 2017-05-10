@@ -1,21 +1,25 @@
 package au.id.mcmaster.apoi.tableadapter;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-import org.apache.tomcat.util.http.fileupload.util.Streams;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.IntStream.range;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-
-import static java.util.stream.Collectors.joining;
 
 
 public class XLCalculator {
@@ -27,18 +31,70 @@ public class XLCalculator {
 		this.tableLoader = tableLoader;
 	}
 
+	public List<String> getRequiredTables(String lookupName) {
+		List<String> tableNames = new ArrayList<String>();
+		XLLookup lookup = tableLoader.getLookup(lookupName);
+		String lookupValue = lookup.getValue();
+		resolveRequiredTables(lookupValue, tableNames);
+		return unique(tableNames);
+	}
+	
+	private void resolveRequiredTables(String lookupValue, List<String> requiredTables) {
+		String[] lookupValueParts = lookupValue.split("\\s+");
+		for (String lookupValuePart : lookupValueParts) {
+			if (!Pattern.matches("[\\+-/\\*]", lookupValuePart) && !isNumber(lookupValuePart)) {
+				XLLookup lookup = tableLoader.getLookup(lookupValuePart);
+				if (lookup != null) {
+					resolveRequiredFields(lookup.getValue(), requiredTables);
+				}
+				else
+				{
+					XLTable table = tableLoader.getTable(lookupValuePart);
+					requiredTables.add(table.getName());
+				}
+			}
+		}
+	}
+	
+	public List<String> getRequiredFields(String lookupName) {
+		List<String> requiredFields = new ArrayList<String>();
+		XLLookup lookup = tableLoader.getLookup(lookupName);
+		String lookupValue = lookup.getValue();
+		resolveRequiredFields(lookupValue, requiredFields);
+		return unique(requiredFields);
+	}
+	
+	private void resolveRequiredFields(String lookupValue, List<String> requiredFields) {
+		String[] lookupValueParts = lookupValue.split("\\s+");
+		for (String lookupValuePart : lookupValueParts) {
+			if (!Pattern.matches("[\\+-/\\*]", lookupValuePart) && !isNumber(lookupValuePart)) {
+				XLLookup lookup = tableLoader.getLookup(lookupValuePart);
+				if (lookup != null) {
+					resolveRequiredFields(lookup.getValue(), requiredFields);
+				}
+				else
+				{
+					XLTable table = tableLoader.getTable(lookupValuePart);
+					requiredFields.addAll(table.getColumnDataTitles());
+				}
+			}
+		}
+	}
+
 	public String lookup(String lookupName, Map<String,String> valueMap) {
 		log.debug(String.format("Getting value for Lookup(%s): ",lookupName, valueMap));
 		XLLookup lookup = tableLoader.getLookup(lookupName);		
 		String lookupValue = lookup.getValue();
 		log.debug(String.format("Expanding Expression(%s): ",lookupValue, valueMap));		
-		String result = resolveLookupValuePart(lookupValue, valueMap);
-		log.debug(String.format("Evaluating expanded Expression(%s): ",result, valueMap));		
+		String resultString = resolveLookupValuePart(lookupValue, valueMap);
+		log.debug(String.format("Evaluating expanded Expression(%s): ",resultString, valueMap));		
 		SpelExpressionParser parser = new SpelExpressionParser();
-		Expression expression = parser.parseExpression(result);
-		return expression.getValue().toString();
+		Expression expression = parser.parseExpression(resultString);
+		String result = expression.getValue().toString();
+		log.debug(String.format("Evaluated Result(%s): ",result));		
+		return result;
 	}
-	
+
 	private String resolveLookupValuePart(String lookupValue, Map<String,String> valueMap) {
 		String[] lookupValueParts = lookupValue.split("\\s+");
 		if (lookupValueParts.length == 1)
@@ -83,11 +139,26 @@ public class XLCalculator {
 			return Arrays.stream(lookupValueParts).map(v -> resolveLookupValuePart(v, valueMap)).collect(joining(" "));
 		}
 	}
-
+	
 	private String resolveTableValue(XLTable table, Map<String, String> valueMap) {
 		Map<String,String> keyToValueMap = table.getValueMap();
-		//List<String> fields = table.getColumnTitles();
-		return "3";
+		List<String> fields = table.getFieldList();
+		String keyString = fields.stream().map(k -> valueMap.get(k)).collect(joining(" | "));
+		String result = keyToValueMap.get(keyString);
+		System.out.println("-------->>>>> " + table.getName() + " : " + fields.toString() + " : " + result);
+		return result;
+	}
+
+	private List<String> unique(List<String> requiredFields) {
+		Set<String> set = new HashSet<String>();
+		List<String> list = new ArrayList<String>();
+		for (String field : requiredFields) {
+			if (!set.contains(field)) {
+				set.add(field);
+				list.add(field);
+			}
+		}
+		return list;
 	}
 
 	private boolean isNumber(String lookupValue)

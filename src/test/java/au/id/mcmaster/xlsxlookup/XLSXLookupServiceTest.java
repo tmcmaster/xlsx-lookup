@@ -33,7 +33,16 @@ public class XLSXLookupServiceTest {
 		XLSXLookupService service = new XLSXLookupService(TEST_FILES);
 		List<String> lookupNames = service.getLookupTableNames();
 		System.out.println(lookupNames);
-		String value = service.getLookupValue("Subtract", null);
-		System.out.println(value);
+		Map<String,String> inputData = new HashMap<String,String>();
+		inputData.put("A", "BC:13");
+		inputData.put("B", "BCD:14-15");
+		inputData.put("C", "BCD:14-15");		
+		inputData.put("ANB", "3");
+		inputData.put("a", "BCD:1");
+		inputData.put("b", "BC:2");
+		inputData.put("c", "CDEF:3");
+		inputData.put("d", "BCDEF:4");
+		String value = service.getLookupValue("Subtract", inputData);
+		Assert.assertEquals("0", value);
 	}
 }
