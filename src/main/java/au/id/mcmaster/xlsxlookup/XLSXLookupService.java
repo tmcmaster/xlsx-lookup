@@ -10,14 +10,13 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import au.id.mcmaster.apoi.tableadapter.XLCalculator;
-import au.id.mcmaster.apoi.tableadapter.XLLookup;
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 import au.id.mcmaster.apoi.tableadapter.XLTable;
 import au.id.mcmaster.apoi.tableadapter.XLTableLoader;
-import au.id.mcmaster.apoi.tableadapter.XLTableLoaderTest;
-
 
 public class XLSXLookupService
 {
@@ -27,10 +26,13 @@ public class XLSXLookupService
 	private Map<String,Map<String,List<String>>> keysMap = new HashMap<String,Map<String,List<String>>>();
 	
 	private XLTableLoader tableLoader;
+	private XLCalculator calculator;
+
 	
-	public XLSXLookupService(String... spreadsheetFileNames)
+	public XLSXLookupService(String... spreadsheetFiles)
 	{
-		this.tableLoader = new XLTableLoader(spreadsheetFileNames);
+		this.tableLoader = new XLTableLoader(spreadsheetFiles);
+		this.calculator = new XLCalculator(this.tableLoader);
 	}
 	
 	public Collection<String> getTableNames() {
@@ -96,15 +98,11 @@ public class XLSXLookupService
 	
 	public List<String> getLookupTableNames() {
 		
-		return new ArrayList<String>(this.tableLoader.getLookupTableNames());
+		return this.calculator.getLookupNames();
 	}
 	
-	public List<String> getCalulatedFields(String tableName, String calculation) {
-		List<String> fieldNames = new ArrayList<String>();
+	public List<String> getLookupTableFields(String lookup) {
 		
-//		XLTable tableAdapter = getTable(tableName);
-//		tableAdapter.get
-//		
-		 return fieldNames;
+		return this.calculator.getRequiredFields(lookup);
 	}
 }

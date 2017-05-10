@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -172,5 +173,9 @@ public class XLCalculator {
 		{
 	        return false;
 	    }
+	}
+
+	public List<String> getLookupNames() {
+		return this.tableLoader.getLookupNames();
 	}
 }

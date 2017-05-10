@@ -2,8 +2,10 @@ package au.id.mcmaster.apoi.tableadapter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -12,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 public class XLTableLoader {
-	private static final Logger log = LoggerFactory.getLogger(XLTableLoaderTest.class);
+	private static final Logger log = LoggerFactory.getLogger(XLTableLoader.class);
 	
 	private Map<String,XLTableDefinition> tableDefinitions = new HashMap<String,XLTableDefinition>();
 	private Map<String,XLTable> tables = new HashMap<String,XLTable>();
@@ -95,6 +97,10 @@ public class XLTableLoader {
 	
 	public XLLookup getLookup(String tableName) {
 		return lookups.get(tableName);		
+	}
+	
+	public List<String> getLookupNames() {
+		return new ArrayList<String>(lookups.keySet());
 	}
 	
 	private XLTable createTable(String tableNameOrAlias, String type) {

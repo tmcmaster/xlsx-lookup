@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class XLSXLookupServiceTest {
-	private static final String[] TEST_FILES = new String[] {"workbooks/Testing.xlsx", "workbooks/TestSet1.xlsx"};
+	private static final String[] TEST_FILES = new String[] {"workbooks/Testing.xlsx","workbooks/TestSet1.xlsx"};
 
 	@Test
 	public void testCreate() {
