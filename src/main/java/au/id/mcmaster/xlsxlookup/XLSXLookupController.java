@@ -67,4 +67,9 @@ public class XLSXLookupController {
 	public String lookupValue(@PathVariable String lookup, @RequestBody Map<String,String> queryMap) {
 		return lookupService.getLookupValue(lookup, queryMap);
 	}
+	
+	@RequestMapping(value="/lookup/{lookup}/options", method=RequestMethod.GET)
+	public Map<String,List<String>> lookupOptionsMap(@PathVariable String lookup) {
+		return lookupService.getLookupOptionsMap(lookup);
+	}
 }

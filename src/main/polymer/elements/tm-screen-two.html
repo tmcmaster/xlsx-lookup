@@ -32,7 +32,7 @@
         height:700px;
       }
     </style>
-    <iron-ajax auto url="/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+    <iron-ajax auto url="/xlsx/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsTreeUrl(table)]]" handle-as="json" last-response="{{fieldOptionTree}}"></iron-ajax>
@@ -97,16 +97,16 @@
           this.$.valuesMap.value = JSON.stringify(valuesMap, null, 4);
         },
         _computeFieldsUrl: function(table) {
-          return '/table/' + table + '/fields';
+          return '/xlsx/table/' + table + '/fields';
         },
         _computeOptionsUrl: function(table) {
-          return '/table/' + table + '/options';
+          return '/xlsx/table/' + table + '/options';
         },
         _computeOptionsTreeUrl: function(table) {
-          return '/table/' + table + '/optionstree';
+          return '/xlsx/table/' + table + '/optionstree';
         },
         _computeValuesUrl: function(table) {
-          return '/table/' + table + '/values';
+          return '/xlsx/table/' + table + '/values';
         },
         _tableListChanged: function(tableList) {
           this.selectedTable = 0;

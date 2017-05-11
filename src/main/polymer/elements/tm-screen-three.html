@@ -1,5 +1,5 @@
 
-<dom-module id="tm-screen-one">
+<dom-module id="tm-screen-three">
   <template>
     <style>
       :host {
@@ -21,11 +21,11 @@
       }
     </style>
 
-    <iron-ajax auto url="/xlsx/table" handle-as="json" last-response="{{tableList}}"></iron-ajax>
+    <iron-ajax auto url="/xlsx/lookup" handle-as="json" last-response="{{tableList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsTreeUrl(table)]]" handle-as="json" last-response="{{fieldOptionTree}}"></iron-ajax>
-    <iron-ajax id="value" method="POST" url="[[_computeValueUrl(table)]]" handle-as="json"
+    <iron-ajax id="value" method="POST" url="http://localhost:8080/xlsx/lookup/Multiply/value" handle-as="json"
                           content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
     <paper-material elevation="1">
@@ -66,7 +66,7 @@
   <script>
     (function(Polymer) {
       Polymer({
-        is: 'tm-screen-one',
+        is: 'tm-screen-three',
         properties: {
           tableList: { type:Array, notify:true },
           fieldList: { type:Array, notify:true },
@@ -82,16 +82,16 @@
           '_tableListChanged(tableList)'
         ],
         _computeFieldsUrl: function(table) {
-          return '/xlsx/table/' + table + '/fields';
+          return '/xlsx/lookup/' + table + '/fields';
         },
         _computeOptionsUrl: function(table) {
-          return '/xlsx/table/' + table + '/options';
+          return '/xlsx/lookup/' + table + '/options';
         },
         _computeOptionsTreeUrl: function(table) {
-          return '/xlsx/table/' + table + '/optionstree';
+          return '/xlsx/lookup/' + table + '/optionstree';
         },
         _computeValueUrl: function(table) {
-          return '/xlsx/table/' + table + '/value';
+          return '/xlsx/lookup/' + table + '/value';
         },
         _getFieldOptions: function(table,fieldPos,fieldName,fieldOptionMap,fieldOptionTree,fieldObjects) {
           if (fieldOptionMap !== undefined) {
@@ -128,7 +128,7 @@
           console.log('-->> DEBUG: ', object);
         },
         ready: function() {
-          console.log('Element tm-screen-one has been created.');
+          console.log('Element tm-screen-three has been created.');
         }
       });
 

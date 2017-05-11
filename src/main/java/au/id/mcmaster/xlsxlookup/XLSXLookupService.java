@@ -105,4 +105,13 @@ public class XLSXLookupService
 		
 		return this.calculator.getRequiredFields(lookup);
 	}
+	
+	public List<String> getLookupOptionMap(String lookup) {
+		
+		return this.calculator.getOptionsMap(lookup);
+	}
+
+	public Map<String, List<String>> getLookupOptionsMap(String lookup) {
+		return this.calculator.getFieldOptionsMap(lookup);
+	}	
 }

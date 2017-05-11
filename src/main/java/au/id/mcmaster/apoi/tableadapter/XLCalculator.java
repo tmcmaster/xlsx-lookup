@@ -4,17 +4,12 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.IntStream.range;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +46,7 @@ public class XLCalculator {
 				else
 				{
 					XLTable table = tableLoader.getTable(lookupValuePart);
+					log.debug(String.format("Resolving '%s' to '%s'",lookupValuePart, (table == null ? null : table.getName())));
 					requiredTables.add(table.getName());
 				}
 			}
@@ -76,7 +72,32 @@ public class XLCalculator {
 				else
 				{
 					XLTable table = tableLoader.getTable(lookupValuePart);
-					requiredFields.addAll(table.getColumnDataTitles());
+					requiredFields.addAll(table.getFieldList());
+				}
+			}
+		}
+	}
+
+	public Map<String,List<String>> getFieldOptionsMap(String lookupName) {
+		Map<String,List<String>> optionsMap = new HashMap<String,List<String>>();
+		XLLookup lookup = tableLoader.getLookup(lookupName);
+		String lookupValue = lookup.getValue();
+		resolveFieldOptionsMap(lookupValue, optionsMap);
+		return optionsMap;
+	}
+	
+	private void resolveFieldOptionsMap(String lookupValue, Map<String,List<String>> optionsMap) {
+		String[] lookupValueParts = lookupValue.split("\\s+");
+		for (String lookupValuePart : lookupValueParts) {
+			if (!Pattern.matches("[\\+-/\\*]", lookupValuePart) && !isNumber(lookupValuePart)) {
+				XLLookup lookup = tableLoader.getLookup(lookupValuePart);
+				if (lookup != null) {
+					resolveFieldOptionsMap(lookup.getValue(), optionsMap);
+				}
+				else
+				{
+					XLTable table = tableLoader.getTable(lookupValuePart);
+					optionsMap.putAll(table.getValueOptionsMap());
 				}
 			}
 		}
@@ -130,6 +151,7 @@ public class XLCalculator {
 				}
 				else
 				{
+					log.debug(String.format("Resolving '%s' to '%s'",lookupValue, (lookup == null ? null : lookup.getName())));
 					String value = lookup.getValue();
 					return resolveLookupValuePart(value, valueMap);
 				}
@@ -177,5 +199,9 @@ public class XLCalculator {
 
 	public List<String> getLookupNames() {
 		return this.tableLoader.getLookupNames();
+	}
+
+	public List<String> getOptionsMap(String lookup) {
+		return null;
 	}
 }
