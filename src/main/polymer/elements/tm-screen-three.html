@@ -25,7 +25,7 @@
     <iron-ajax auto url="[[_computeFieldsUrl(table)]]" handle-as="json" last-response="{{fieldList}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsUrl(table)]]" handle-as="json" last-response="{{fieldOptionMap}}"></iron-ajax>
     <iron-ajax auto url="[[_computeOptionsTreeUrl(table)]]" handle-as="json" last-response="{{fieldOptionTree}}"></iron-ajax>
-    <iron-ajax id="value" method="POST" url="http://localhost:8080/xlsx/lookup/Multiply/value" handle-as="json"
+    <iron-ajax id="value" method="POST" url="[[_computeValueUrl(table)]]" handle-as="json"
                           content-type="application/json" body="" last-response="{{value}}"></iron-ajax>
 
     <paper-material elevation="1">

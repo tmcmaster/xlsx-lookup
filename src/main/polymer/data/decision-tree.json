@@ -1,0 +1,149 @@
+{
+  "G2986": {
+    "n/a": {
+      "A, B,C": {
+        "All Occupations": {
+          "30, 60 or 90 days + 2 years": {
+            "To age 65": {
+              "Voluntary Cover per month": {
+                "All": {}
+              }
+            }
+          }
+        }
+      },
+      "D": {
+        "All Occupations": {
+          "30, 60 or 90 days + 2 years": {
+            "To age 65": {
+              "Voluntary Cover per week": {
+                "Effective 1/4/2016": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "G3439": {
+    "1": {
+      "A": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "B": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "C": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "D": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "E": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "F": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "G": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Default Cover (per week)": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      },
+      "All categories": {
+        "All Occupations": {
+          "14 days": {
+            "104 weeks": {
+              "Voluntary Cover per week": {
+                "1": {},
+                "2": {},
+                "3": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "2": {
+      "All Categories": {
+        "All Occupations": {
+          "30, 60 or 90 days": {
+            "104 weeks": {
+              "Default Cover per month": {
+                "All": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

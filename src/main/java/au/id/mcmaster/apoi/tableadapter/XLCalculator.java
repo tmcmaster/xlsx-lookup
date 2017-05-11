@@ -97,7 +97,29 @@ public class XLCalculator {
 				else
 				{
 					XLTable table = tableLoader.getTable(lookupValuePart);
-					optionsMap.putAll(table.getValueOptionsMap());
+					if (table != null) {
+						mergeOptionMaps(optionsMap, table.getValueOptionsMap());
+					}
+				}
+			}
+		}
+	}
+	
+	private void mergeOptionMaps(Map<String,List<String>> optionMap1, Map<String,List<String>> optionMap2) {
+		for (String key : optionMap2.keySet()) {
+			List<String> options1 = optionMap1.get(key);
+			List<String> options2 = optionMap2.get(key);
+			if (options1 == null) {
+				optionMap1.put(key, options2);
+			}
+			else
+			{
+				Set<String> set = new HashSet<String>(options1);
+				for (String option : options2) {
+					if (!set.contains(option)) {
+						set.add(option);
+						options1.add(option);
+					}
 				}
 			}
 		}

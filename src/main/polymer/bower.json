@@ -5,7 +5,8 @@
     "polymer": "Polymer/polymer#^1.4.0",
     "tm-app-structure": "tmcmaster/tm-app-structure",
     "paper-elements": "^1.0.7",
-    "iron-elements": "^1.0.10"
+    "iron-elements": "^1.0.10",
+    "tm-sunburst": "tmcmaster/tm-sunburst"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
