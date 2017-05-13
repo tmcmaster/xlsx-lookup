@@ -32,14 +32,14 @@ public class XLTableDefinition
 		String tableName = defintionData[0];
 		String tableAlias = defintionData[1];
 		String worksheetName = defintionData[2];
-		int tableStartX = Integer.parseInt(defintionData[3]);
-		int tableStartY = Integer.parseInt(defintionData[4]);
-		int columnDataWidth = Integer.parseInt(defintionData[5]);
-		int columnDataHeight = Integer.parseInt(defintionData[6]);
-		int rowDataWidth = Integer.parseInt(defintionData[7]);
-		int rowDataHeight = Integer.parseInt(defintionData[8]);
+		int tableStartX = new Integer(defintionData[3]);
+		int tableStartY = Double.valueOf(defintionData[4]).intValue();
+		int columnDataWidth = Double.valueOf(defintionData[5]).intValue();
+		int columnDataHeight = Double.valueOf(defintionData[6]).intValue();
+		int rowDataWidth = Double.valueOf(defintionData[7]).intValue();
+		int rowDataHeight = Double.valueOf(defintionData[8]).intValue();
 		String type = defintionData[9];
-		int version = Integer.parseInt(defintionData[10]);
+		int version = Double.valueOf(defintionData[10]).intValue();
 		
 		init(workbookName, worksheetName, tableName, tableAlias,
 				tableStartX, tableStartY, columnDataWidth, columnDataHeight, 

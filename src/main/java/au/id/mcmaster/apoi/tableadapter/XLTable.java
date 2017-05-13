@@ -26,11 +26,13 @@ public class XLTable {
 	private XLDataGrid columnTitles;
 	private XLDataGrid rowTitles;	
 	private String type;
+	int version;
 	private String name;
 	
 	public XLTable(XLTableDefinition tableDefinition) throws IOException
 	{
 		this.type = tableDefinition.getType();
+		this.version = tableDefinition.getVersion();
 		this.name = tableDefinition.getTableName();
 		
 		String fileName = tableDefinition.getWorkbookName();
@@ -92,14 +94,17 @@ public class XLTable {
 	public List<String> getFieldList() {
 		List<String> fields = new ArrayList<String>();
 		
-		fields.addAll(getRowDataTitles());
 		fields.addAll(getColumnDataTitles());
+		fields.addAll(getRowDataTitles());
 		
 		return fields;
 	}
 	
 	public List<String> getColumnDataTitles() {
-		return getColumnDataTitles(false);
+		String[] titleArray = columnTitles.getColumn(0);
+		List<String> valueTitles = new ArrayList<String>();
+		Collections.addAll(valueTitles, titleArray);
+		return valueTitles;
 	}
 	
 	public List<String> getRowDataTitles() {
@@ -107,16 +112,6 @@ public class XLTable {
 		List<String> rowTitles = new ArrayList<String>();
 		Collections.addAll(rowTitles, titleArray);
 		return rowTitles;
-	}
-	
-	public List<String> getColumnDataTitles(boolean addANB) {
-		String[] titleArray = columnTitles.getColumn(0);
-		List<String> valueTitles = new ArrayList<String>();
-		if (addANB) {
-			valueTitles.add("ANB");
-		}
-		Collections.addAll(valueTitles, titleArray);
-		return valueTitles;
 	}
 	
 	public XLOptionTree getColumnsValuesOptionsTree() {
@@ -129,6 +124,26 @@ public class XLTable {
 		return optionsTree;
 	}
 	
+	public XLValueTree getValueTree() {
+		XLValueTree valueTree = new XLValueTree();
+		int combinedSize = columnData.getNumberOfRows()+rowData.getNumberOfColumns();
+		String[] combinedValues = new String[combinedSize];
+		for (int c=0; c<columnData.getNumberOfColumns(); c++)
+		{
+			String[] columnValues = columnData.getColumn(c);
+			System.arraycopy(columnValues, 0, combinedValues, 0, columnValues.length);
+			for (int r=0; r<rowData.getNumberOfRows(); r++)
+			{
+				String value = valueData.getValue(r, c);
+				String[] rowValues = rowData.getRow(r);
+				System.arraycopy(rowValues, 0, combinedValues, columnValues.length, rowValues.length);
+				valueTree.setValue(combinedValues, value);
+			}
+		}
+		
+		return valueTree;
+	}
+	
 	/**
 	 * Get a list of unique options for the row value, and options for each of the column header lines.
 	 * 
@@ -138,19 +153,20 @@ public class XLTable {
 		
 		Map<String,List<String>> valueOptionsMap = new HashMap<String,List<String>>();
 		
-		List<String> valueTitles = getColumnDataTitles(true);
-		
-		// row data unique value options
-		String rowDataLabel = valueTitles.get(0);
-		
-		List<String> uniqueRowData = rowData.getColumnUniqueList(0);
-		valueOptionsMap.put(rowDataLabel, uniqueRowData);
+		// column data unique value options
+		List<String> rowDataTitles = getRowDataTitles();
+		for (int i=0; i<rowDataTitles.size(); i++) {
+			String rowDataLabel = rowDataTitles.get(i);
+			List<String> uniqueRowValues = rowData.getColumnUniqueList(i);
+			valueOptionsMap.put(rowDataLabel, uniqueRowValues);
+		}
 		
 		// column data unique value options
-		for (int i=0; i<columnData.getNumberOfRows(); i++) {
-			String columnDataLabel = valueTitles.get(i+1);
+		List<String> columnDataTitles = getColumnDataTitles();
+		for (int i=0; i<columnDataTitles.size(); i++) {
+			String columnDataLabel = columnDataTitles.get(i);
 			List<String> uniqueColumnValues = columnData.getRowUniqueList(i);
-			uniqueColumnValues.add("Undefined");
+			//uniqueColumnValues.add("Undefined");
 			valueOptionsMap.put(columnDataLabel, uniqueColumnValues);
 		}
 		

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
+import au.id.mcmaster.apoi.tableadapter.XLValueTree;
 
 
 @RestController
@@ -36,6 +37,11 @@ public class XLSXLookupController {
 	@RequestMapping(value = "/table/{table}/optionstree", method = RequestMethod.GET)
 	public XLOptionTree optionsTree(@PathVariable String table) {
 		return lookupService.getColumnValuesOptionTree(table);
+	}
+
+	@RequestMapping(value = "/table/{table}/valuetree", method = RequestMethod.GET)
+	public XLValueTree valueTree(@PathVariable String table) {
+		return lookupService.getValueTree(table);
 	}
 	
 	@RequestMapping(value = "/table/{table}/values", method = RequestMethod.GET)

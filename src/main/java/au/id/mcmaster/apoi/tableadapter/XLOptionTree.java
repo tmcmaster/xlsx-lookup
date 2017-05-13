@@ -37,20 +37,24 @@ public class XLOptionTree extends HashMap<String,XLOptionTree>{
 		if (strings.length == 0) {
 			return;
 		} else {
-			XLOptionTree child = get(strings[0]);
-			if (strings.length == 1) {
-				if (child == null) {
-					put(strings[0], LEAF);
+			String string = strings[0];
+			String[] parts = (string.indexOf(",") > 0 ? string.split(",") : new String[] {string});
+			for (String part : parts) {
+				XLOptionTree child = get(part);
+				if (strings.length == 1) {
+					if (child == null) {
+						put(part, LEAF);
+					}
 				}
-			}
-			else
-			{
-				if (child == null) {
-					child = new XLOptionTree();
-					put(strings[0], child);
+				else
+				{
+					if (child == null) {
+						child = new XLOptionTree();
+						put(part, child);
+					}
+					String[] subString = Arrays.copyOfRange(strings, 1, strings.length);
+					child.addOptions(subString);
 				}
-				String[] subString = Arrays.copyOfRange(strings, 1, strings.length);
-				child.addOptions(subString);
 			}
 		}
 	}

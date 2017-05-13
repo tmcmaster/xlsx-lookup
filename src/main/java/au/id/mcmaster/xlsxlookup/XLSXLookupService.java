@@ -10,13 +10,12 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import au.id.mcmaster.apoi.tableadapter.XLCalculator;
 import au.id.mcmaster.apoi.tableadapter.XLOptionTree;
 import au.id.mcmaster.apoi.tableadapter.XLTable;
 import au.id.mcmaster.apoi.tableadapter.XLTableLoader;
+import au.id.mcmaster.apoi.tableadapter.XLValueTree;
 
 public class XLSXLookupService
 {
@@ -24,6 +23,7 @@ public class XLSXLookupService
 	
 	private Map<String,Map<String,String>> valuesMap = new HashMap<String,Map<String,String>>();
 	private Map<String,Map<String,List<String>>> keysMap = new HashMap<String,Map<String,List<String>>>();
+	private Map<String,XLValueTree> valueTrees = new HashMap<String,XLValueTree>();
 	
 	private XLTableLoader tableLoader;
 	private XLCalculator calculator;
@@ -41,7 +41,7 @@ public class XLSXLookupService
 	
 	public List<String> getFieldNames(String table) {
 		XLTable tableAdapter = tableLoader.getTable(table);
-		return new ArrayList<String>(tableAdapter.getColumnDataTitles(true));
+		return new ArrayList<String>(tableAdapter.getFieldList());
 	}
 	
 	public Map<String,List<String>> getValueOptionsMap(String table) {
@@ -62,7 +62,7 @@ public class XLSXLookupService
 		return tableAdapter.getColumnsValuesOptionsTree();
 	}
 	
-	public String getValue(String tableName, String...keys) {
+	public String getValueOld(String tableName, String...keys) {
 		List<String> list = new ArrayList<String>();
 		Collections.addAll(list, keys);
 		String key = list.stream().collect(Collectors.joining(" | "));
@@ -71,6 +71,11 @@ public class XLSXLookupService
 		String value = valueMap.get(key);
 		System.out.println("Looked up value = " + value);
 		return value;
+	}
+	
+	public String getValue(String tableName, String...keys) {
+		XLValueTree valueTree = getValueTree(tableName);
+		return valueTree.getValue(keys);
 	}
 	
 	public String getLookupValue(String lookupName, Map<String,String> inputMap) {
@@ -95,7 +100,25 @@ public class XLSXLookupService
 		}
 		return valueMap;
 	}
-	
+
+	public XLValueTree getValueTree(String tableName) {
+		XLValueTree valueTree = this.valueTrees.get(tableName);
+		if (valueTree == null)
+		{
+			try
+			{
+				XLTable tableAdapter = tableLoader.getTable(tableName);
+				valueTree = tableAdapter.getValueTree();
+				this.valueTrees.put(tableName,valueTree);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException("Could not load required value data: " + tableName);
+			}
+		}
+		return valueTree;
+	}
+
 	public List<String> getLookupTableNames() {
 		
 		return this.calculator.getLookupNames();

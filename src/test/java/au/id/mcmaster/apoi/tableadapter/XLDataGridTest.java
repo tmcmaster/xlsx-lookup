@@ -144,7 +144,7 @@ public class XLDataGridTest {
 		};
 		
 		String[] expected = new String[] { "a", "b", "f" };
-		List<String> actual = XLDataGrid.uniqueList(testData);
+		List<String> actual = XLDataGrid.uniqueList(testData,false);
 		Assert.assertEquals(expected.length, actual.size());
 		for (int i=0; i<expected.length; i++) {
 			Assert.assertEquals(expected[i], actual.get(i));

@@ -81,22 +81,36 @@ public class XLDataGrid {
 	
 	public List<String> getRowUniqueList(int row) {
 		String[] values = getRow(row);
-		return uniqueList(values);
+		return uniqueList(values, true);
 	}
 	
 	public List<String> getColumnUniqueList(int column) {
 		String[] values = getColumn(column);
-		return uniqueList(values);
+		return uniqueList(values, true);
 	}
 	
-	public static List<String> uniqueList(String[] data) {
+	public static List<String> uniqueList(String[] data, boolean split) {
 		List<String> results = new ArrayList<String>();
 		Set<String> set = new HashSet<String>();
 		for (String item : data) {
-			if (!set.contains(item))
+			if (split) {
+				String[] itemParts = item.split(",");
+				for (String part : itemParts) {
+					part = part.trim();
+					if (!set.contains(part))
+					{
+						set.add(part);
+						results.add(part);
+					}
+				}
+			}
+			else
 			{
-				set.add(item);
-				results.add(item);
+				if (!set.contains(item))
+				{
+					set.add(item);
+					results.add(item);
+				}
 			}
 		}
 		return results;

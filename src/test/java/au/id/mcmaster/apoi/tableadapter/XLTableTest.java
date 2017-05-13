@@ -11,6 +11,7 @@ public class XLTableTest {
 	private static final String FILE_NAME = "workbooks/TestSet1.xlsx";
 	private static XLTableDefinition GRID_V1_SIMPLE = new XLTableDefinition(FILE_NAME,"Grid V1 Simple","Grid - Version 1 - Simple","Grid_V1_Simple",1,1,5,4,1,4,"grid",1);
 	private static XLTableDefinition GRID_V1_COMPLEX = new XLTableDefinition(FILE_NAME,"Grid V1 Complex","Grid - Version 1 - Complex","Grid_V1_Simple",3,8,5,3,1,4,"grid",1);
+	private static XLTableDefinition MULTI_VALUE = new XLTableDefinition(FILE_NAME,"Multiple Input Values","Multiple Input Values","Multiple_Input_Values",2,5,5,4,3,4,"grid",2);
 
 	@Test
 	public void testCreate() throws Exception 
@@ -53,12 +54,24 @@ public class XLTableTest {
 	public void testGetColumnTitles() throws Exception
 	{
 		XLTable table = new XLTable(GRID_V1_SIMPLE);
-		List<String> columnTitles = table.getColumnDataTitles(true);
-		String[] expected = new String[] {"ANB","a","b","c","d"};
+		List<String> columnTitles = table.getColumnDataTitles();
+		String[] expected = new String[] {"a","b","c","d"};
 		for (int i=0;i<columnTitles.size(); i++) {
 			Assert.assertTrue(expected[i].equals(columnTitles.get(i)));
 		}
 	}
+
+	@Test
+	public void testGetFieldList() throws Exception
+	{
+		XLTable table = new XLTable(GRID_V1_SIMPLE);
+		List<String> columnTitles = table.getFieldList();
+		String[] expected = new String[] {"a","b","c","d","ANB"};
+		for (int i=0;i<columnTitles.size(); i++) {
+			Assert.assertTrue(expected[i].equals(columnTitles.get(i)));
+		}
+	}
+
 	
 	@Test
 	public void getValueMap() throws Exception
@@ -120,5 +133,17 @@ public class XLTableTest {
 				Assert.assertEquals(expected[i], actual.get(i));
 			}
 		}
+	}
+	
+	@Test
+	public void testGetValueTree() throws Exception
+	{
+		XLTable table = new XLTable(MULTI_VALUE);
+		System.out.println(table);
+		XLValueTree valueTree = table.getValueTree();
+		System.out.println(valueTree);
+		String value = valueTree.getValue(new String[] {"C","H","L","P","e","h","3"});
+		Assert.assertEquals("14", value);
+		
 	}
 }

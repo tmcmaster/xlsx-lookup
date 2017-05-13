@@ -1,6 +1,7 @@
 package au.id.mcmaster.apoi.tableadapter;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -185,7 +186,8 @@ public class XLCalculator {
 		}
 	}
 	
-	private String resolveTableValue(XLTable table, Map<String, String> valueMap) {
+	@Deprecated
+	private String resolveTableValueOld(XLTable table, Map<String, String> valueMap) {
 		Map<String,String> keyToValueMap = table.getValueMap();
 		List<String> fields = table.getFieldList();
 		String keyString = fields.stream().map(k -> valueMap.get(k)).collect(joining(" | "));
@@ -194,6 +196,15 @@ public class XLCalculator {
 		return result;
 	}
 
+	private String resolveTableValue(XLTable table, Map<String, String> valueMap) {
+		XLValueTree valueTree = table.getValueTree();
+		List<String> fields = table.getFieldList();
+		List<String> valueList = fields.stream().map(f -> valueMap.get(f)).collect(toList());
+		String[] values = new String[valueList.size()];
+		valueList.toArray(values);
+		return valueTree.getValue(values);
+	}
+	
 	private List<String> unique(List<String> requiredFields) {
 		Set<String> set = new HashSet<String>();
 		List<String> list = new ArrayList<String>();
