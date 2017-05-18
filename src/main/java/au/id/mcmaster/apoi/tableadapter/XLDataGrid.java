@@ -30,6 +30,11 @@ public class XLDataGrid {
 		return data[row];
 	}
 	
+	
+	public String[][] getData() {
+		return data;
+	}
+
 	public String[] joinRowAll(String seperator) {
 		String[] rowDataAll = new String[data.length];
 		for (int i=0; i<data.length; i++) {

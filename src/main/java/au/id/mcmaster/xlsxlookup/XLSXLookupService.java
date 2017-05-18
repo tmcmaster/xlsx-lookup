@@ -136,5 +136,10 @@ public class XLSXLookupService
 
 	public Map<String, List<String>> getLookupOptionsMap(String lookup) {
 		return this.calculator.getFieldOptionsMap(lookup);
+	}
+
+	public XLTable getTableDefinition(String table) {
+		
+		return tableLoader.getTable(table);
 	}	
 }

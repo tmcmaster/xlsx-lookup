@@ -9,7 +9,7 @@ interface ValueTree
 	public String getValue();
 	public String getValue(String[] keys);
 	public void setValue(String value);
-	public void setValue(String[] keys, String value);
+	public void setValue(String[] keys, String value, String[] defaults, String[] wildcards);
 	public ValueTree get(String key);
 	public ValueTree put(String key, ValueTree value);
 }
@@ -34,7 +34,7 @@ class ValueTreeValue implements ValueTree {
 
 
 	@Override
-	public void setValue(String[] keys, String value) {
+	public void setValue(String[] keys, String value, String[] defaults, String[] wildcards) {
 		throw new RuntimeException("This method should not be being called.");
 	}
 
@@ -93,14 +93,14 @@ public class XLValueTree extends HashMap<String,ValueTree> implements ValueTree 
 		}
 	}
 
-	public void setValue(String[] strings, String value) {
+	// TODO need to change the approach. Need  to pass arrays as is, and pass a pointer instead of creating new arrays each call.
+	public void setValue(String[] strings, String value, String[] defaults, String[] wildcards) {
 		if (strings.length == 0) {
 			return;
 		} else {
 			String string = strings[0];
 			String[] parts = (string.indexOf(",") > 0 ? string.split(",") : new String[] {string});
 			for (String part : parts) {
-				
 				if (strings.length == 1)
 				{
 					ValueTree child = get(part);
@@ -113,11 +113,14 @@ public class XLValueTree extends HashMap<String,ValueTree> implements ValueTree 
 				else
 				{
 					ValueTree child = get(part);
+					//child.setDefault(defaults[0]);
+					//child.setWildcard(wildcards[0]);
 					if (child == null) {
 						child = new XLValueTree();
 						put(part, child);
 					}
-					child.setValue(Arrays.copyOfRange(strings, 1, strings.length), value);
+					child.setValue(Arrays.copyOfRange(strings, 1, strings.length), value, 
+							Arrays.copyOfRange(defaults, 1, defaults.length), Arrays.copyOfRange(wildcards, 1, wildcards.length));
 				}
 			}
 		}
